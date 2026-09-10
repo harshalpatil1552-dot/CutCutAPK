@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="CutCutAPK.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:auth="clr-namespace:CutCutAPK.Views.Auth"
+    Shell.FlyoutBehavior="Disabled"
+    Title="CutCut">
+
+    <!-- Login is the only statically-declared route: it's the app's true entry point (see
+         App.xaml.cs), and the flyout stays disabled since there's no signed-in chrome to show
+         here. CustomerDashboard/SalonDashboard/Register are registered as flat routes in
+         AppShell.xaml.cs and reached purely via GoToAsync — they're deliberately not modeled as
+         ShellContent tabs since there's no shared shell UI between them yet. -->
+    <ShellContent
+        Route="login"
+        ContentTemplate="{DataTemplate auth:LoginPage}" />
+
+</Shell>

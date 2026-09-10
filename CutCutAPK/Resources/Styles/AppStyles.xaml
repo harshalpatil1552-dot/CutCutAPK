@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- ============================================================================
+         Styles for the signed-in Customer and Salon screens (salon search/detail,
+         bookings, salon management, today's appointments). Ported 1:1 from the shared
+         .card / .card-* / .btn-sm* / .btn-secondary / .empty-state / .loading-text /
+         .page-heading / .otp-display / .alert-success classes in the Angular app's
+         src/styles.scss — same paddings, radii and type scale as AuthStyles.xaml uses
+         for the auth screens, so every screen in the app matches the web app exactly.
+         ============================================================================ -->
+
+    <!-- == Header bar (app-header) == -->
+
+    <Style x:Key="HeaderNavButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="Padding" Value="10,6" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="BorderWidth" Value="0" />
+        <Setter Property="MinimumHeightRequest" Value="0" />
+        <Setter Property="MinimumWidthRequest" Value="0" />
+    </Style>
+
+    <Style x:Key="HeaderNavButtonActive" TargetType="Button" BasedOn="{StaticResource HeaderNavButton}">
+        <Setter Property="TextColor" Value="{StaticResource BrandPrimary}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandPrimaryLight}" />
+    </Style>
+
+    <!-- == Page heading (page-heading h1 / p) == -->
+
+    <Style x:Key="PageTitle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="22" />
+    </Style>
+
+    <Style x:Key="PageSubtitle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="FontSize" Value="15" />
+    </Style>
+
+    <!-- == Cards (.card, .card-title, .card-subtitle, .card-meta) == -->
+
+    <Style x:Key="CardBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandSurface}" />
+        <Setter Property="Stroke" Value="{StaticResource BrandBorder}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+        <Setter Property="Padding" Value="18,16" />
+    </Style>
+
+    <Style x:Key="CardTitle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="16" />
+    </Style>
+
+    <Style x:Key="CardSubtitle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style x:Key="CardMeta" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- == Small buttons, used inline on cards (.btn-sm) == -->
+
+    <Style x:Key="SmallButtonPrimary" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandPrimary}" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="BorderWidth" Value="0" />
+        <Setter Property="MinimumHeightRequest" Value="36" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.55" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SmallButtonOutline" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandSurface}" />
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="BorderColor" Value="{StaticResource BrandBorder}" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="MinimumHeightRequest" Value="36" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.55" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <Style x:Key="SmallButtonDanger" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandSurface}" />
+        <Setter Property="TextColor" Value="{StaticResource BrandDanger}" />
+        <Setter Property="BorderColor" Value="{StaticResource BrandDangerBorder}" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="MinimumHeightRequest" Value="36" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.55" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <!-- == Secondary button (.btn-secondary) — "Log out" in the header, and other secondary actions == -->
+
+    <Style x:Key="SecondaryButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandSurface}" />
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="BorderColor" Value="{StaticResource BrandBorder}" />
+        <Setter Property="BorderWidth" Value="1" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="MinimumHeightRequest" Value="38" />
+    </Style>
+
+    <!-- == Empty / loading states (.empty-state, .loading-text) == -->
+
+    <Style x:Key="EmptyStateTitle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="EmptyStateSubtitle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="LoadingLabel" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+        <Setter Property="Margin" Value="0,24" />
+    </Style>
+
+    <!-- == Success alert (.alert-success) — mirrors AlertErrorBorder/AlertErrorText in AuthStyles.xaml == -->
+
+    <Style x:Key="AlertSuccessBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandSuccessLight}" />
+        <Setter Property="Stroke" Value="{StaticResource BrandSuccessBorder}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+        <Setter Property="Padding" Value="14,12" />
+    </Style>
+
+    <Style x:Key="AlertSuccessText" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandSuccess}" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <!-- == OTP display (.otp-display) == -->
+
+    <Style x:Key="OtpDisplayBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandPrimaryLight}" />
+        <Setter Property="Stroke" Value="Transparent" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+        <Setter Property="Padding" Value="18,12" />
+        <Setter Property="HorizontalOptions" Value="Start" />
+    </Style>
+
+    <Style x:Key="OtpDisplayText" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandPrimaryDark}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="24" />
+        <Setter Property="CharacterSpacing" Value="4" />
+    </Style>
+
+    <!-- == Star rating (.star-rating button) == -->
+
+    <Style x:Key="StarButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="TextColor" Value="{StaticResource BrandBorder}" />
+        <Setter Property="FontSize" Value="26" />
+        <Setter Property="Padding" Value="2,0" />
+        <Setter Property="BorderWidth" Value="0" />
+        <Setter Property="MinimumHeightRequest" Value="0" />
+        <Setter Property="MinimumWidthRequest" Value="0" />
+    </Style>
+
+    <Style x:Key="StarButtonFilled" TargetType="Button" BasedOn="{StaticResource StarButton}">
+        <Setter Property="TextColor" Value="#F59E0B" />
+    </Style>
+
+    <!-- == Text input used outside a form (e.g. the OTP entry on Today's Appointments) == -->
+
+    <Style x:Key="InlineEntryBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandSurface}" />
+        <Setter Property="Stroke" Value="{StaticResource BrandBorder}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+        <Setter Property="Padding" Value="10,0" />
+        <Setter Property="HeightRequest" Value="38" />
+        <Setter Property="WidthRequest" Value="140" />
+    </Style>
+
+    <Style x:Key="InlineEntry" TargetType="Entry">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <!-- == Date/Time pickers, styled to sit inside FieldEntryBorder like a mirrored web
+         &lt;input type="date"&gt;/&lt;input type="time"&gt; — FieldEntry itself can't be reused here
+         since it's TargetType="Entry" and DatePicker/TimePicker don't derive from Entry. == -->
+
+    <Style x:Key="FieldDatePicker" TargetType="DatePicker">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <Style x:Key="FieldTimePicker" TargetType="TimePicker">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+</ResourceDictionary>

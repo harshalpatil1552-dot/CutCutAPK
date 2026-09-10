@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Android 9+ (API 28+) blocks plaintext HTTP by default. CutCut.API's local dev server
+  (Properties/launchSettings.json) only serves HTTP, so cleartext is allowed here — but scoped
+  strictly to the two hosts a dev/emulator build ever talks to, never globally. Production must be
+  served over HTTPS (see ApiConstants.BaseUrl's Release branch), so this file should never need a
+  production domain added to it.
+-->
+<network-security-config>
+    <domain-config cleartextTrafficPermitted="true">
+        <!-- Android emulator's alias for the host machine's localhost. -->
+        <domain includeSubdomains="false">10.0.2.2</domain>
+        <!-- Physical device connected via `adb reverse tcp:5186 tcp:5186`, or a Windows/MacCatalyst debug run. -->
+        <domain includeSubdomains="false">localhost</domain>
+    </domain-config>
+</network-security-config>

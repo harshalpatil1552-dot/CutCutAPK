@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:CutCutAPK.ViewModels.Auth"
+             xmlns:converters="clr-namespace:CutCutAPK.Common.Converters"
+             x:Class="CutCutAPK.Views.Auth.LoginPage"
+             x:DataType="viewModels:LoginViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource BrandBackground}">
+
+    <ContentPage.Resources>
+        <converters:StringNullOrEmptyToBoolConverter x:Key="HasTextConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <converters:BusyToSignInTextConverter x:Key="BusyToSignInTextConverter" />
+    </ContentPage.Resources>
+
+    <ScrollView>
+        <Grid Padding="24" MinimumHeightRequest="640">
+            <!-- auth-card: centered, max-width 420 to mirror the web app's auth-shell/auth-card. -->
+            <Border Style="{StaticResource AuthCardBorder}"
+                    MaximumWidthRequest="420"
+                    HorizontalOptions="Center"
+                    VerticalOptions="Center">
+                <VerticalStackLayout>
+
+                    <!-- auth-brand -->
+                    <HorizontalStackLayout Spacing="10" Margin="0,0,0,28">
+                        <Border Style="{StaticResource AuthBrandMark}">
+                            <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
+                        </Border>
+                        <Label Text="CutCut" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
+                    </HorizontalStackLayout>
+
+                    <Label Text="Welcome back" Style="{StaticResource AuthTitle}" Margin="0,0,0,6" />
+                    <Label Text="Sign in to book a slot or manage your salon."
+                           Style="{StaticResource AuthSubtitle}"
+                           Margin="0,0,0,28" />
+
+                    <!-- alert-error: only shown while ErrorMessage is set. -->
+                    <Border Style="{StaticResource AlertErrorBorder}"
+                            Margin="0,0,0,18"
+                            IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
+                        <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
+                    </Border>
+
+                    <!-- Phone or email field -->
+                    <VerticalStackLayout Spacing="6" Margin="0,0,0,18">
+                        <Label Text="Phone or email" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource FieldEntryBorder}">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border"
+                                             Binding="{Binding PhoneOrEmailError, Converter={StaticResource HasTextConverter}}"
+                                             Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource BrandDanger}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Entry x:Name="PhoneOrEmailEntry"
+                                   Text="{Binding PhoneOrEmail}"
+                                   Placeholder="9876543210 or you@example.com"
+                                   Keyboard="Email"
+                                   ReturnType="Next"
+                                   Style="{StaticResource FieldEntry}"
+                                   Unfocused="OnPhoneOrEmailUnfocused"
+                                   Completed="OnPhoneOrEmailCompleted" />
+                        </Border>
+                        <Label Text="{Binding PhoneOrEmailError}"
+                               Style="{StaticResource FieldErrorLabel}"
+                               IsVisible="{Binding PhoneOrEmailError, Converter={StaticResource HasTextConverter}}" />
+                    </VerticalStackLayout>
+
+                    <!-- Password field -->
+                    <VerticalStackLayout Spacing="6" Margin="0,0,0,24">
+                        <Label Text="Password" Style="{StaticResource FieldLabel}" />
+                        <Border Style="{StaticResource FieldEntryBorder}">
+                            <Border.Triggers>
+                                <DataTrigger TargetType="Border"
+                                             Binding="{Binding PasswordError, Converter={StaticResource HasTextConverter}}"
+                                             Value="True">
+                                    <Setter Property="Stroke" Value="{StaticResource BrandDanger}" />
+                                </DataTrigger>
+                            </Border.Triggers>
+                            <Entry x:Name="PasswordEntry"
+                                   Text="{Binding Password}"
+                                   Placeholder="••••••••"
+                                   IsPassword="True"
+                                   ReturnType="Done"
+                                   Style="{StaticResource FieldEntry}"
+                                   Unfocused="OnPasswordUnfocused"
+                                   Completed="OnPasswordCompleted" />
+                        </Border>
+                        <Label Text="{Binding PasswordError}"
+                               Style="{StaticResource FieldErrorLabel}"
+                               IsVisible="{Binding PasswordError, Converter={StaticResource HasTextConverter}}" />
+                    </VerticalStackLayout>
+
+                    <!-- btn-primary: text + enabled state both swap on IsBusy, same as the web
+                         button's [disabled]="isSubmitting()" + text ternary. -->
+                    <Button Text="{Binding IsBusy, Converter={StaticResource BusyToSignInTextConverter}}"
+                            Command="{Binding SubmitCommand}"
+                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                            Style="{StaticResource PrimaryButton}" />
+
+                    <!-- auth-footer -->
+                    <HorizontalStackLayout HorizontalOptions="Center" Margin="0,24,0,0" Spacing="4">
+                        <Label Text="New to CutCut?" Style="{StaticResource AuthFooterText}" />
+                        <Label Text="Create an account" Style="{StaticResource AuthFooterLink}">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding GoToRegisterCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </HorizontalStackLayout>
+
+                </VerticalStackLayout>
+            </Border>
+        </Grid>
+    </ScrollView>
+</ContentPage>

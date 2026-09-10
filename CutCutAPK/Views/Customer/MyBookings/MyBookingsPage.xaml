@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:CutCutAPK.ViewModels.Customer"
+             xmlns:bookings="clr-namespace:CutCutAPK.Models.Bookings"
+             xmlns:converters="clr-namespace:CutCutAPK.Common.Converters"
+             xmlns:shared="clr-namespace:CutCutAPK.Views.Shared"
+             x:Class="CutCutAPK.Views.Customer.MyBookings.MyBookingsPage"
+             x:Name="Root"
+             x:DataType="viewModels:MyBookingsViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource BrandBackground}">
+
+    <ContentPage.Resources>
+        <converters:StringNullOrEmptyToBoolConverter x:Key="HasTextConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- app-header -->
+        <Grid Grid.Row="0" RowDefinitions="Auto,1" BackgroundColor="{StaticResource BrandSurface}">
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="20,14" ColumnSpacing="12">
+                <HorizontalStackLayout Grid.Column="0" Spacing="10">
+                    <Border Style="{StaticResource AuthBrandMark}">
+                        <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
+                    </Border>
+                    <Label Text="CutCut" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="Start">
+                    <Button Text="Find a salon" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToSalonSearchCommand}" />
+                    <Button Text="My bookings" Style="{StaticResource HeaderNavButtonActive}" Command="{Binding GoToMyBookingsCommand}" />
+                </HorizontalStackLayout>
+                <Button Grid.Column="2" Text="Log out" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
+            </Grid>
+            <BoxView Grid.Row="1" Color="{StaticResource BrandBorder}" HeightRequest="1" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24" Spacing="0">
+
+                <!-- page-heading -->
+                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,18">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="My bookings" Style="{StaticResource PageTitle}" />
+                        <Label Text="Everything you've booked, from pending payment through to completed." Style="{StaticResource PageSubtitle}" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1" Text="+ New booking"
+                            Style="{StaticResource SmallButtonPrimary}"
+                            VerticalOptions="Center"
+                            Command="{Binding GoToSalonSearchCommand}" />
+                </Grid>
+
+                <Border Style="{StaticResource AlertErrorBorder}"
+                        Margin="0,0,0,16"
+                        IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
+                </Border>
+
+                <Label Text="Loading your bookings…" Style="{StaticResource LoadingLabel}" IsVisible="{Binding IsLoading}" />
+
+                <VerticalStackLayout Spacing="6" IsVisible="{Binding ShowEmptyState}" Margin="0,20,0,0">
+                    <Label Text="No bookings yet" Style="{StaticResource EmptyStateTitle}" />
+                    <Label Text="Find a salon and book your first appointment." Style="{StaticResource EmptyStateSubtitle}" />
+                </VerticalStackLayout>
+
+                <CollectionView ItemsSource="{Binding Bookings}">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="bookings:BookingResponseDto">
+                            <Border Style="{StaticResource CardBorder}">
+                                <Border.GestureRecognizers>
+                                    <TapGestureRecognizer
+                                        Command="{Binding Source={x:Reference Root}, Path=BindingContext.OpenBookingCommand}"
+                                        CommandParameter="{Binding .}" />
+                                </Border.GestureRecognizers>
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                        <Label Style="{StaticResource CardTitle}">
+                                            <Label.Text>
+                                                <MultiBinding StringFormat="{}{0} at {1}">
+                                                    <Binding Path="ServiceName" />
+                                                    <Binding Path="SalonName" />
+                                                </MultiBinding>
+                                            </Label.Text>
+                                        </Label>
+                                        <HorizontalStackLayout Spacing="14">
+                                            <Label Style="{StaticResource CardMeta}">
+                                                <Label.Text>
+                                                    <Binding Path="SlotStartTimeUtc" StringFormat="{}{0:MMM d, yyyy h:mm tt}" />
+                                                </Label.Text>
+                                            </Label>
+                                            <Label Style="{StaticResource CardMeta}">
+                                                <Label.Text>
+                                                    <Binding Path="Amount" StringFormat="₹{0}" />
+                                                </Label.Text>
+                                            </Label>
+                                        </HorizontalStackLayout>
+                                    </VerticalStackLayout>
+                                    <shared:StatusBadgeView Grid.Column="1" StatusId="{Binding BookingStatusId}" VerticalOptions="Center" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:CutCutAPK.ViewModels.Salon"
+             xmlns:salons="clr-namespace:CutCutAPK.Models.Salons"
+             xmlns:converters="clr-namespace:CutCutAPK.Common.Converters"
+             x:Class="CutCutAPK.Views.Salon.SalonHome.SalonHomePage"
+             x:Name="Root"
+             x:DataType="viewModels:SalonHomeViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource BrandBackground}">
+
+    <ContentPage.Resources>
+        <converters:StringNullOrEmptyToBoolConverter x:Key="HasTextConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- app-header: brand + logout only — nav links only ever show once a salon is selected,
+             and this screen redirects away the moment that happens. -->
+        <Grid Grid.Row="0" RowDefinitions="Auto,1" BackgroundColor="{StaticResource BrandSurface}">
+            <Grid Grid.Row="0" ColumnDefinitions="*,Auto" Padding="20,14" ColumnSpacing="12">
+                <HorizontalStackLayout Grid.Column="0" Spacing="10">
+                    <Border Style="{StaticResource AuthBrandMark}">
+                        <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
+                    </Border>
+                    <Label Text="CutCut for Salons" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <Button Grid.Column="1" Text="Log out" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
+            </Grid>
+            <BoxView Grid.Row="1" Color="{StaticResource BrandBorder}" HeightRequest="1" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24" Spacing="0" MaximumWidthRequest="560" HorizontalOptions="Center">
+
+                <Border Style="{StaticResource AlertErrorBorder}"
+                        Margin="0,0,0,16"
+                        IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
+                </Border>
+
+                <Label Text="Loading your salon…" Style="{StaticResource LoadingLabel}" IsVisible="{Binding IsLoaded, Converter={StaticResource InverseBoolConverter}}" />
+
+                <!-- Picker: more than one salon managed by this account -->
+                <VerticalStackLayout Spacing="10" IsVisible="{Binding ShowPicker}">
+                    <Label Text="Choose a salon" Style="{StaticResource PageTitle}" Margin="0,0,0,2" />
+                    <Label Text="You manage more than one salon — pick which one to work on." Style="{StaticResource PageSubtitle}" Margin="0,0,0,16" />
+
+                    <CollectionView ItemsSource="{Binding MySalons}">
+                        <CollectionView.ItemsLayout>
+                            <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+                        </CollectionView.ItemsLayout>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="salons:SalonResponseDto">
+                                <Border Style="{StaticResource CardBorder}">
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <Label Grid.Column="0" Text="{Binding Name}" Style="{StaticResource CardTitle}" VerticalOptions="Center" />
+                                        <Button Grid.Column="1"
+                                                Text="Manage"
+                                                Style="{StaticResource SmallButtonPrimary}"
+                                                Command="{Binding Source={x:Reference Root}, Path=BindingContext.SelectSalonCommand}"
+                                                CommandParameter="{Binding .}" />
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+
+                <!-- Owner, no salon yet -->
+                <VerticalStackLayout Spacing="6" IsVisible="{Binding ShowCreatePrompt}">
+                    <Label Text="You don't have a salon yet" Style="{StaticResource EmptyStateTitle}" />
+                    <Label Text="Create your salon to start adding services and staff." Style="{StaticResource EmptyStateSubtitle}" />
+                    <Button Text="Create your salon"
+                            Style="{StaticResource SmallButtonPrimary}"
+                            Command="{Binding GoToCreateSalonCommand}"
+                            HorizontalOptions="Start"
+                            Margin="0,12,0,0" />
+                </VerticalStackLayout>
+
+                <!-- Staff, not yet assigned -->
+                <VerticalStackLayout Spacing="6" IsVisible="{Binding ShowStaffPrompt}">
+                    <Label Text="You're not assigned to a salon yet" Style="{StaticResource EmptyStateTitle}" />
+                    <Label Text="Ask the salon owner to add your account as staff." Style="{StaticResource EmptyStateSubtitle}" />
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

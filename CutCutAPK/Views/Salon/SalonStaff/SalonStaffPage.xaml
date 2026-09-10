@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:CutCutAPK.ViewModels.Salon"
+             xmlns:staff="clr-namespace:CutCutAPK.Models.Staff"
+             xmlns:converters="clr-namespace:CutCutAPK.Common.Converters"
+             x:Class="CutCutAPK.Views.Salon.SalonStaff.SalonStaffPage"
+             x:DataType="viewModels:SalonStaffViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource BrandBackground}">
+
+    <ContentPage.Resources>
+        <converters:StringNullOrEmptyToBoolConverter x:Key="HasTextConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
+        <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- app-header -->
+        <Grid Grid.Row="0" RowDefinitions="Auto,1" BackgroundColor="{StaticResource BrandSurface}">
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="20,14" ColumnSpacing="12">
+                <HorizontalStackLayout Grid.Column="0" Spacing="10">
+                    <Border Style="{StaticResource AuthBrandMark}">
+                        <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
+                    </Border>
+                    <Label Text="CutCut for Salons" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="Start">
+                    <Button Text="Today" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToTodayCommand}" />
+                    <Button Text="Services" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToServicesCommand}" IsVisible="{Binding IsOwner}" />
+                    <Button Text="Staff" Style="{StaticResource HeaderNavButtonActive}" Command="{Binding GoToStaffCommand}" IsVisible="{Binding IsOwner}" />
+                    <Button Text="Settings" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToSettingsCommand}" IsVisible="{Binding IsOwner}" />
+                </HorizontalStackLayout>
+                <Button Grid.Column="2" Text="Log out" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
+            </Grid>
+            <BoxView Grid.Row="1" Color="{StaticResource BrandBorder}" HeightRequest="1" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24" Spacing="0">
+
+                <Label Text="Staff" Style="{StaticResource PageTitle}" Margin="0,0,0,2" />
+                <Label Text="Add team members who've registered on CutCut with a Salon Staff account." Style="{StaticResource PageSubtitle}" Margin="0,0,0,18" />
+
+                <Border Style="{StaticResource AlertErrorBorder}"
+                        Margin="0,0,0,16"
+                        IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
+                </Border>
+
+                <Border Style="{StaticResource AlertSuccessBorder}"
+                        Margin="0,0,0,16"
+                        IsVisible="{Binding InfoMessage, Converter={StaticResource HasTextConverter}}">
+                    <Label Text="{Binding InfoMessage}" Style="{StaticResource AlertSuccessText}" />
+                </Border>
+
+                <!-- Add-staff lookup card -->
+                <Border Style="{StaticResource CardBorder}" Margin="0,0,0,16">
+                    <VerticalStackLayout Spacing="14">
+                        <Label Text="Add a staff member" Style="{StaticResource CardTitle}" />
+
+                        <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
+                            <VerticalStackLayout Grid.Column="0" Spacing="6">
+                                <Label Text="Their phone number" Style="{StaticResource FieldLabel}" />
+                                <Border Style="{StaticResource FieldEntryBorder}">
+                                    <Entry Text="{Binding LookupPhone}"
+                                           Placeholder="9876543210"
+                                           Keyboard="Telephone"
+                                           ReturnType="Search"
+                                           Style="{StaticResource FieldEntry}"
+                                           Completed="OnLookupPhoneCompleted" />
+                                </Border>
+                            </VerticalStackLayout>
+                            <Button Grid.Column="1"
+                                    Text="{Binding IsLookingUp, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Find|Looking up…'}"
+                                    Command="{Binding LookupCommand}"
+                                    IsEnabled="{Binding IsLookingUp, Converter={StaticResource InverseBoolConverter}}"
+                                    Style="{StaticResource SmallButtonOutline}"
+                                    VerticalOptions="End" />
+                        </Grid>
+
+                        <Border Style="{StaticResource CardBorder}"
+                                BackgroundColor="{StaticResource BrandBackground}"
+                                IsVisible="{Binding FoundUser, Converter={StaticResource IsNotNullConverter}}">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                    <Label Text="{Binding FoundUser.FullName}" Style="{StaticResource CardTitle}" />
+                                    <Label Text="{Binding FoundUser.Phone}" Style="{StaticResource CardSubtitle}" />
+                                </VerticalStackLayout>
+                                <Button Grid.Column="1"
+                                        Text="{Binding IsAdding, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Add to salon|Adding…'}"
+                                        Command="{Binding AddFoundUserCommand}"
+                                        IsEnabled="{Binding IsAdding, Converter={StaticResource InverseBoolConverter}}"
+                                        Style="{StaticResource SmallButtonPrimary}"
+                                        VerticalOptions="Center" />
+                            </Grid>
+                        </Border>
+                    </VerticalStackLayout>
+                </Border>
+
+                <Label Text="Loading staff…" Style="{StaticResource LoadingLabel}" IsVisible="{Binding IsLoading}" />
+
+                <VerticalStackLayout Spacing="6" IsVisible="{Binding ShowEmptyState}" Margin="0,4,0,0">
+                    <Label Text="No staff added yet" Style="{StaticResource EmptyStateTitle}" />
+                    <Label Text="Add a staff member above to let them check customers in." Style="{StaticResource EmptyStateSubtitle}" />
+                </VerticalStackLayout>
+
+                <CollectionView ItemsSource="{Binding StaffMembers}">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="staff:StaffResponseDto">
+                            <Border Style="{StaticResource CardBorder}">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                                        <Label Text="{Binding FullName}" Style="{StaticResource CardTitle}" />
+                                        <Label Text="{Binding Phone}" Style="{StaticResource CardSubtitle}" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="1"
+                                           Style="{StaticResource CardMeta}"
+                                           VerticalOptions="Center"
+                                           Text="{Binding IsActive, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Inactive|Active'}" />
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

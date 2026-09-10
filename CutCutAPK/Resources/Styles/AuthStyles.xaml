@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<ResourceDictionary
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+
+    <!-- ============================================================================
+         Styles for the auth screens (Login/Register) and the signed-in placeholder
+         pages. Ported from the shared .auth-*, .form-field, .btn-*, .alert-* classes
+         in the Angular app's src/styles.scss — same paddings, radii, and type scale,
+         translated from px/rem to MAUI device-independent units (1:1, both are dp-like).
+         ============================================================================ -->
+
+    <!-- == Auth shell (auth-card) == -->
+
+    <Style x:Key="AuthCardBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandSurface}" />
+        <Setter Property="Stroke" Value="Transparent" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+        <Setter Property="Padding" Value="24,32" />
+        <Setter Property="Shadow">
+            <Setter.Value>
+                <Shadow Brush="Black" Opacity="0.12" Radius="24" Offset="0,10" />
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <!-- == Brand mark (auth-brand) == -->
+
+    <Style x:Key="AuthBrandMark" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandPrimary}" />
+        <Setter Property="Stroke" Value="Transparent" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+        <Setter Property="WidthRequest" Value="36" />
+        <Setter Property="HeightRequest" Value="36" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <Style x:Key="AuthBrandMarkText" TargetType="Label">
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="HorizontalOptions" Value="Center" />
+        <Setter Property="VerticalOptions" Value="Center" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+    </Style>
+
+    <Style x:Key="AuthBrandName" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="17" />
+    </Style>
+
+    <!-- == Titles == -->
+
+    <Style x:Key="AuthTitle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="24" />
+    </Style>
+
+    <Style x:Key="AuthSubtitle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="FontSize" Value="15" />
+    </Style>
+
+    <Style x:Key="AuthFooterText" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style x:Key="AuthFooterLink" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandPrimary}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="TextDecorations" Value="Underline" />
+    </Style>
+
+    <!-- == Form fields (form-field) == -->
+
+    <Style x:Key="FieldLabel" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <Style x:Key="FieldEntryBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandSurface}" />
+        <Setter Property="Stroke" Value="{StaticResource BrandBorder}" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Padding" Value="13,0" />
+        <Setter Property="HeightRequest" Value="46" />
+    </Style>
+
+    <Style x:Key="FieldEntry" TargetType="Entry">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <Style x:Key="FieldErrorLabel" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandDanger}" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- form-field-hint-inline: the "(optional)" tag next to the Email label. -->
+    <Style x:Key="FieldHintInline" TargetType="Span">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="FontAttributes" Value="None" />
+    </Style>
+
+    <!-- role-option: one row per selectable role on Register. -->
+    <Style x:Key="RoleOptionBorder" TargetType="Border">
+        <Setter Property="Stroke" Value="{StaticResource BrandBorder}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+        <Setter Property="Padding" Value="12,10" />
+    </Style>
+
+    <Style x:Key="RoleOptionRadio" TargetType="RadioButton">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <!-- == Buttons (btn-primary) == -->
+
+    <Style x:Key="PrimaryButton" TargetType="Button">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandPrimary}" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="CornerRadius" Value="10" />
+        <Setter Property="HeightRequest" Value="46" />
+        <Setter Property="BorderWidth" Value="0" />
+        <Setter Property="HorizontalOptions" Value="Fill" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.6" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <!-- == Alerts (alert-error) == -->
+
+    <Style x:Key="AlertErrorBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandDangerLight}" />
+        <Setter Property="Stroke" Value="{StaticResource BrandDangerBorder}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+        <Setter Property="Padding" Value="14,12" />
+    </Style>
+
+    <Style x:Key="AlertErrorText" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandDanger}" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+</ResourceDictionary>

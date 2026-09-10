@@ -1,0 +1,307 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:CutCutAPK.ViewModels.Customer"
+             xmlns:converters="clr-namespace:CutCutAPK.Common.Converters"
+             xmlns:shared="clr-namespace:CutCutAPK.Views.Shared"
+             x:Class="CutCutAPK.Views.Customer.BookingDetail.BookingDetailPage"
+             x:Name="Root"
+             x:DataType="viewModels:BookingDetailViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource BrandBackground}">
+
+    <ContentPage.Resources>
+        <converters:StringNullOrEmptyToBoolConverter x:Key="HasTextConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
+        <converters:IsNullConverter x:Key="IsNullConverter" />
+        <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
+        <converters:EnumEqualsConverter x:Key="EnumEqualsConverter" />
+        <converters:IsRatingAtLeastConverter x:Key="IsRatingAtLeastConverter" />
+        <converters:OtpButtonTextConverter x:Key="OtpButtonTextConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- app-header -->
+        <Grid Grid.Row="0" RowDefinitions="Auto,1" BackgroundColor="{StaticResource BrandSurface}">
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="20,14" ColumnSpacing="12">
+                <HorizontalStackLayout Grid.Column="0" Spacing="10">
+                    <Border Style="{StaticResource AuthBrandMark}">
+                        <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
+                    </Border>
+                    <Label Text="CutCut" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="Start">
+                    <Button Text="Find a salon" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToSalonSearchCommand}" />
+                    <Button Text="My bookings" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToMyBookingsCommand}" />
+                </HorizontalStackLayout>
+                <Button Grid.Column="2" Text="Log out" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
+            </Grid>
+            <BoxView Grid.Row="1" Color="{StaticResource BrandBorder}" HeightRequest="1" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24" Spacing="14" MaximumWidthRequest="560" HorizontalOptions="Center">
+
+                <Label Text="&#8592; Back to my bookings" Style="{StaticResource AuthFooterLink}" Margin="0,0,0,6">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding GoToMyBookingsCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+
+                <Border Style="{StaticResource AlertErrorBorder}"
+                        IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
+                </Border>
+
+                <Border Style="{StaticResource AlertSuccessBorder}"
+                        IsVisible="{Binding InfoMessage, Converter={StaticResource HasTextConverter}}">
+                    <Label Text="{Binding InfoMessage}" Style="{StaticResource AlertSuccessText}" />
+                </Border>
+
+                <Label Text="Loading booking…" Style="{StaticResource LoadingLabel}" IsVisible="{Binding IsLoading}" />
+
+                <VerticalStackLayout Spacing="14" IsVisible="{Binding Booking, Converter={StaticResource IsNotNullConverter}}">
+
+                    <!-- page-heading -->
+                    <Grid ColumnDefinitions="*,Auto">
+                        <VerticalStackLayout Grid.Column="0" Spacing="2">
+                            <Label Text="{Binding Booking.ServiceName}" Style="{StaticResource PageTitle}" />
+                            <Label Style="{StaticResource PageSubtitle}">
+                                <Label.Text>
+                                    <MultiBinding StringFormat="{}{0} · {1:MMM d, yyyy h:mm tt}">
+                                        <Binding Path="Booking.SalonName" />
+                                        <Binding Path="Booking.SlotStartTimeUtc" />
+                                    </MultiBinding>
+                                </Label.Text>
+                            </Label>
+                        </VerticalStackLayout>
+                        <shared:StatusBadgeView Grid.Column="1" StatusId="{Binding Booking.BookingStatusId}" VerticalOptions="Start" />
+                    </Grid>
+
+                    <!-- card-meta -->
+                    <Border Style="{StaticResource CardBorder}">
+                        <HorizontalStackLayout Spacing="18">
+                            <Label Style="{StaticResource CardMeta}">
+                                <Label.Text>
+                                    <Binding Path="Booking.Amount" StringFormat="Amount: ₹{0}" />
+                                </Label.Text>
+                            </Label>
+                            <Label Style="{StaticResource CardMeta}"
+                                   IsVisible="{Binding Booking.CheckedInAt, Converter={StaticResource IsNotNullConverter}}">
+                                <Label.Text>
+                                    <Binding Path="Booking.CheckedInAt" StringFormat="Checked in: {0:MMM d, h:mm tt}" />
+                                </Label.Text>
+                            </Label>
+                            <Label Style="{StaticResource CardMeta}"
+                                   IsVisible="{Binding Booking.CompletedAt, Converter={StaticResource IsNotNullConverter}}">
+                                <Label.Text>
+                                    <Binding Path="Booking.CompletedAt" StringFormat="Completed: {0:MMM d, h:mm tt}" />
+                                </Label.Text>
+                            </Label>
+                            <Label Style="{StaticResource CardMeta}"
+                                   IsVisible="{Binding Booking.CancelledAt, Converter={StaticResource IsNotNullConverter}}">
+                                <Label.Text>
+                                    <Binding Path="Booking.CancelledAt" StringFormat="Cancelled: {0:MMM d, h:mm tt}" />
+                                </Label.Text>
+                            </Label>
+                        </HorizontalStackLayout>
+                    </Border>
+
+                    <!-- Pending: pay -->
+                    <Border Style="{StaticResource CardBorder}"
+                            IsVisible="{Binding Booking.BookingStatusId, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=Pending}">
+                        <VerticalStackLayout Spacing="10">
+
+                            <VerticalStackLayout Spacing="6" IsVisible="{Binding PendingOrder, Converter={StaticResource IsNullConverter}}">
+                                <Label Text="Complete your booking" Style="{StaticResource CardTitle}" />
+                                <Label Text="No real payment gateway is connected yet — this button simulates a successful payment so you can see the full booking flow."
+                                       Style="{StaticResource CardSubtitle}" />
+                                <Button Text="{Binding IsPaying, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Pay Now|Starting payment…'}"
+                                        Command="{Binding StartPaymentCommand}"
+                                        IsEnabled="{Binding IsAnyActionBusy, Converter={StaticResource InverseBoolConverter}}"
+                                        Style="{StaticResource SmallButtonPrimary}"
+                                        HorizontalOptions="Start"
+                                        Margin="0,4,0,0" />
+                            </VerticalStackLayout>
+
+                            <VerticalStackLayout Spacing="6" IsVisible="{Binding PendingOrder, Converter={StaticResource IsNotNullConverter}}">
+                                <Label Style="{StaticResource CardTitle}">
+                                    <Label.Text>
+                                        <Binding Path="PendingOrder.Amount" StringFormat="Order created — ₹{0}" />
+                                    </Label.Text>
+                                </Label>
+                                <Label Style="{StaticResource CardSubtitle}">
+                                    <Label.Text>
+                                        <Binding Path="PendingOrder.GatewayOrderId" StringFormat="Order ref {0}. Click below to simulate the gateway confirming payment." />
+                                    </Label.Text>
+                                </Label>
+                                <Button Text="{Binding IsPaying, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Simulate payment success|Confirming…'}"
+                                        Command="{Binding SimulatePaymentSuccessCommand}"
+                                        IsEnabled="{Binding IsAnyActionBusy, Converter={StaticResource InverseBoolConverter}}"
+                                        Style="{StaticResource SmallButtonPrimary}"
+                                        HorizontalOptions="Start"
+                                        Margin="0,4,0,0" />
+                            </VerticalStackLayout>
+
+                            <Button Text="Cancel booking"
+                                    Command="{Binding CancelBookingCommand}"
+                                    IsEnabled="{Binding IsAnyActionBusy, Converter={StaticResource InverseBoolConverter}}"
+                                    Style="{StaticResource SmallButtonDanger}"
+                                    HorizontalOptions="Start"
+                                    Margin="0,6,0,0" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Confirmed: check-in code -->
+                    <Border Style="{StaticResource CardBorder}"
+                            IsVisible="{Binding Booking.BookingStatusId, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=Confirmed}">
+                        <VerticalStackLayout Spacing="10">
+                            <Label Text="Check-in code" Style="{StaticResource CardTitle}" />
+
+                            <VerticalStackLayout Spacing="8" IsVisible="{Binding OtpCode, Converter={StaticResource IsNotNullConverter}}">
+                                <Label Style="{StaticResource CardSubtitle}">
+                                    <Label.Text>
+                                        <Binding Path="OtpExpiresAtUtc" StringFormat="Read this out to salon staff when you arrive. Valid until {0:h:mm tt}." />
+                                    </Label.Text>
+                                </Label>
+                                <Border Style="{StaticResource OtpDisplayBorder}">
+                                    <Label Text="{Binding OtpCode}" Style="{StaticResource OtpDisplayText}" />
+                                </Border>
+                            </VerticalStackLayout>
+
+                            <Label Text="Your check-in code was shown once when payment was confirmed. If you didn't note it down, get a new one below — this invalidates the old code."
+                                   Style="{StaticResource CardSubtitle}"
+                                   IsVisible="{Binding OtpCode, Converter={StaticResource IsNullConverter}}" />
+
+                            <HorizontalStackLayout Spacing="10" Margin="0,6,0,0">
+                                <Button Command="{Binding FetchCheckInCodeCommand}"
+                                        IsEnabled="{Binding IsAnyActionBusy, Converter={StaticResource InverseBoolConverter}}"
+                                        Style="{StaticResource SmallButtonOutline}">
+                                    <Button.Text>
+                                        <MultiBinding Converter="{StaticResource OtpButtonTextConverter}">
+                                            <Binding Path="IsFetchingOtp" />
+                                            <Binding Path="OtpCode" />
+                                        </MultiBinding>
+                                    </Button.Text>
+                                </Button>
+                                <Button Text="Cancel booking"
+                                        Command="{Binding CancelBookingCommand}"
+                                        IsEnabled="{Binding IsAnyActionBusy, Converter={StaticResource InverseBoolConverter}}"
+                                        Style="{StaticResource SmallButtonDanger}" />
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- CheckedIn / InProgress -->
+                    <Border Style="{StaticResource CardBorder}"
+                            IsVisible="{Binding Booking.BookingStatusId, Converter={StaticResource EnumEqualsConverter}, ConverterParameter='CheckedIn,InProgress'}">
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="You're all set" Style="{StaticResource CardTitle}" />
+                            <Label Text="You're checked in — the salon will start your service shortly."
+                                   Style="{StaticResource CardSubtitle}"
+                                   IsVisible="{Binding Booking.BookingStatusId, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=CheckedIn}" />
+                            <Label Text="Your service is in progress."
+                                   Style="{StaticResource CardSubtitle}"
+                                   IsVisible="{Binding Booking.BookingStatusId, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=InProgress}" />
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Completed: review (three-way branch, mirroring the web app's
+                         hasExistingReview -> !showReviewForm -> showReviewForm else-chain) -->
+                    <Border Style="{StaticResource CardBorder}"
+                            IsVisible="{Binding Booking.BookingStatusId, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=Completed}">
+                        <VerticalStackLayout Spacing="10">
+
+                            <!-- Case 1: already reviewed -->
+                            <Label Text="Thanks for rating this salon!"
+                                   Style="{StaticResource CardTitle}"
+                                   IsVisible="{Binding HasExistingReview}" />
+
+                            <!-- Case 2: prompt to start a review -->
+                            <VerticalStackLayout Spacing="10" IsVisible="{Binding ShowRatingPrompt}">
+                                <Label Text="How was your visit?" Style="{StaticResource CardTitle}" />
+                                <Button Text="Rate this salon"
+                                        Command="{Binding BeginReviewCommand}"
+                                        Style="{StaticResource SmallButtonPrimary}"
+                                        HorizontalOptions="Start" />
+                            </VerticalStackLayout>
+
+                            <!-- Case 3: the review form itself -->
+                            <VerticalStackLayout Spacing="10" IsVisible="{Binding ShowReviewForm}">
+                                <Label Text="Rate this salon" Style="{StaticResource CardTitle}" />
+
+                                <HorizontalStackLayout Spacing="2">
+                                    <Button Text="★" Style="{StaticResource StarButton}" Command="{Binding SetRatingCommand}" CommandParameter="1">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding ReviewRating, Converter={StaticResource IsRatingAtLeastConverter}, ConverterParameter=1}" Value="True">
+                                                <Setter Property="TextColor" Value="#F59E0B" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+                                    <Button Text="★" Style="{StaticResource StarButton}" Command="{Binding SetRatingCommand}" CommandParameter="2">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding ReviewRating, Converter={StaticResource IsRatingAtLeastConverter}, ConverterParameter=2}" Value="True">
+                                                <Setter Property="TextColor" Value="#F59E0B" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+                                    <Button Text="★" Style="{StaticResource StarButton}" Command="{Binding SetRatingCommand}" CommandParameter="3">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding ReviewRating, Converter={StaticResource IsRatingAtLeastConverter}, ConverterParameter=3}" Value="True">
+                                                <Setter Property="TextColor" Value="#F59E0B" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+                                    <Button Text="★" Style="{StaticResource StarButton}" Command="{Binding SetRatingCommand}" CommandParameter="4">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding ReviewRating, Converter={StaticResource IsRatingAtLeastConverter}, ConverterParameter=4}" Value="True">
+                                                <Setter Property="TextColor" Value="#F59E0B" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+                                    <Button Text="★" Style="{StaticResource StarButton}" Command="{Binding SetRatingCommand}" CommandParameter="5">
+                                        <Button.Triggers>
+                                            <DataTrigger TargetType="Button" Binding="{Binding ReviewRating, Converter={StaticResource IsRatingAtLeastConverter}, ConverterParameter=5}" Value="True">
+                                                <Setter Property="TextColor" Value="#F59E0B" />
+                                            </DataTrigger>
+                                        </Button.Triggers>
+                                    </Button>
+                                </HorizontalStackLayout>
+
+                                <VerticalStackLayout Spacing="6">
+                                    <Label Text="Comment (optional)" Style="{StaticResource FieldLabel}" />
+                                    <Border Style="{StaticResource FieldEntryBorder}" HeightRequest="90" Padding="13,10">
+                                        <Editor Text="{Binding ReviewComment}"
+                                                Placeholder="How was the service?"
+                                                TextColor="{StaticResource BrandTextPrimary}"
+                                                PlaceholderColor="{StaticResource BrandTextMuted}"
+                                                BackgroundColor="Transparent"
+                                                FontSize="15"
+                                                AutoSize="TextChanges" />
+                                    </Border>
+                                </VerticalStackLayout>
+
+                                <Button Text="{Binding IsSubmittingReview, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Submit rating|Submitting…'}"
+                                        Command="{Binding SubmitReviewCommand}"
+                                        IsEnabled="{Binding IsAnyActionBusy, Converter={StaticResource InverseBoolConverter}}"
+                                        Style="{StaticResource SmallButtonPrimary}"
+                                        HorizontalOptions="Start" />
+                            </VerticalStackLayout>
+
+                        </VerticalStackLayout>
+                    </Border>
+
+                    <!-- Cancelled -->
+                    <Border Style="{StaticResource CardBorder}"
+                            IsVisible="{Binding Booking.BookingStatusId, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=Cancelled}">
+                        <Label Text="This booking was cancelled" Style="{StaticResource CardTitle}" />
+                    </Border>
+
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

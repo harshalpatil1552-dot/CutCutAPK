@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:CutCutAPK.ViewModels.Salon"
+             xmlns:converters="clr-namespace:CutCutAPK.Common.Converters"
+             xmlns:shared="clr-namespace:CutCutAPK.Views.Shared"
+             x:Class="CutCutAPK.Views.Salon.TodayAppointments.TodayAppointmentsPage"
+             x:Name="Root"
+             x:DataType="viewModels:TodayAppointmentsViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource BrandBackground}">
+
+    <ContentPage.Resources>
+        <converters:StringNullOrEmptyToBoolConverter x:Key="HasTextConverter" />
+        <converters:EnumEqualsConverter x:Key="EnumEqualsConverter" />
+        <converters:IsNotBusyIdConverter x:Key="IsNotBusyIdConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- app-header -->
+        <Grid Grid.Row="0" RowDefinitions="Auto,1" BackgroundColor="{StaticResource BrandSurface}">
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="20,14" ColumnSpacing="12">
+                <HorizontalStackLayout Grid.Column="0" Spacing="10">
+                    <Border Style="{StaticResource AuthBrandMark}">
+                        <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
+                    </Border>
+                    <Label Text="CutCut for Salons" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="Start">
+                    <Button Text="Today" Style="{StaticResource HeaderNavButtonActive}" Command="{Binding GoToTodayCommand}" />
+                    <Button Text="Services" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToServicesCommand}" IsVisible="{Binding IsOwner}" />
+                    <Button Text="Staff" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToStaffCommand}" IsVisible="{Binding IsOwner}" />
+                    <Button Text="Settings" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToSettingsCommand}" IsVisible="{Binding IsOwner}" />
+                </HorizontalStackLayout>
+                <Button Grid.Column="2" Text="Log out" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
+            </Grid>
+            <BoxView Grid.Row="1" Color="{StaticResource BrandBorder}" HeightRequest="1" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24" Spacing="0">
+
+                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,18">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="Today's appointments" Style="{StaticResource PageTitle}" />
+                        <Label Text="Check customers in with their OTP, then move them through the service." Style="{StaticResource PageSubtitle}" />
+                    </VerticalStackLayout>
+                    <Button Grid.Column="1" Text="Refresh"
+                            Style="{StaticResource SmallButtonOutline}"
+                            VerticalOptions="Center"
+                            Command="{Binding RefreshCommand}" />
+                </Grid>
+
+                <Border Style="{StaticResource AlertErrorBorder}"
+                        Margin="0,0,0,16"
+                        IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
+                </Border>
+
+                <Label Text="Loading appointments…" Style="{StaticResource LoadingLabel}" IsVisible="{Binding IsLoading}" />
+
+                <VerticalStackLayout Spacing="6" IsVisible="{Binding ShowEmptyState}">
+                    <Label Text="No appointments today" Style="{StaticResource EmptyStateTitle}" />
+                    <Label Text="Bookings for today will show up here once customers pay." Style="{StaticResource EmptyStateSubtitle}" />
+                </VerticalStackLayout>
+
+                <CollectionView ItemsSource="{Binding Rows}">
+                    <CollectionView.ItemsLayout>
+                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+                    </CollectionView.ItemsLayout>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="viewModels:TodayAppointmentRowViewModel">
+                            <Border Style="{StaticResource CardBorder}">
+                                <VerticalStackLayout Spacing="10">
+
+                                    <Grid ColumnDefinitions="*,Auto">
+                                        <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                            <Label Style="{StaticResource CardTitle}">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="{}{0:h:mm tt} · {1}">
+                                                        <Binding Path="Booking.SlotStartTimeUtc" />
+                                                        <Binding Path="Booking.ServiceName" />
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+                                            <Label Style="{StaticResource CardSubtitle}">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="{}{0} · ₹{1}">
+                                                        <Binding Path="Booking.CustomerName" />
+                                                        <Binding Path="Booking.Amount" />
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+                                        </VerticalStackLayout>
+                                        <shared:StatusBadgeView Grid.Column="1" StatusId="{Binding Booking.BookingStatusId}" VerticalOptions="Start" />
+                                    </Grid>
+
+                                    <!-- Confirmed: OTP entry + check-in + cancel -->
+                                    <HorizontalStackLayout Spacing="8"
+                                            IsVisible="{Binding Booking.BookingStatusId, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=Confirmed}">
+                                        <Border Style="{StaticResource InlineEntryBorder}">
+                                            <Entry Text="{Binding OtpInput}"
+                                                   Placeholder="6-digit OTP"
+                                                   Keyboard="Numeric"
+                                                   MaxLength="6"
+                                                   Style="{StaticResource InlineEntry}" />
+                                        </Border>
+                                        <Button Text="Check in"
+                                                Style="{StaticResource SmallButtonPrimary}"
+                                                Command="{Binding Source={x:Reference Root}, Path=BindingContext.CheckInCommand}"
+                                                CommandParameter="{Binding .}">
+                                            <Button.IsEnabled>
+                                                <MultiBinding Converter="{StaticResource IsNotBusyIdConverter}">
+                                                    <Binding Source="{x:Reference Root}" Path="BindingContext.BusyBookingId" />
+                                                    <Binding Path="Booking.BookingId" />
+                                                </MultiBinding>
+                                            </Button.IsEnabled>
+                                        </Button>
+                                        <Button Text="Cancel"
+                                                Style="{StaticResource SmallButtonDanger}"
+                                                Command="{Binding Source={x:Reference Root}, Path=BindingContext.CancelCommand}"
+                                                CommandParameter="{Binding .}">
+                                            <Button.IsEnabled>
+                                                <MultiBinding Converter="{StaticResource IsNotBusyIdConverter}">
+                                                    <Binding Source="{x:Reference Root}" Path="BindingContext.BusyBookingId" />
+                                                    <Binding Path="Booking.BookingId" />
+                                                </MultiBinding>
+                                            </Button.IsEnabled>
+                                        </Button>
+                                    </HorizontalStackLayout>
+
+                                    <!-- CheckedIn: start service -->
+                                    <Button Text="Start service"
+                                            Style="{StaticResource SmallButtonPrimary}"
+                                            HorizontalOptions="Start"
+                                            IsVisible="{Binding Booking.BookingStatusId, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=CheckedIn}"
+                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.StartCommand}"
+                                            CommandParameter="{Binding .}">
+                                        <Button.IsEnabled>
+                                            <MultiBinding Converter="{StaticResource IsNotBusyIdConverter}">
+                                                <Binding Source="{x:Reference Root}" Path="BindingContext.BusyBookingId" />
+                                                <Binding Path="Booking.BookingId" />
+                                            </MultiBinding>
+                                        </Button.IsEnabled>
+                                    </Button>
+
+                                    <!-- InProgress: mark completed -->
+                                    <Button Text="Mark completed"
+                                            Style="{StaticResource SmallButtonPrimary}"
+                                            HorizontalOptions="Start"
+                                            IsVisible="{Binding Booking.BookingStatusId, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=InProgress}"
+                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.CompleteCommand}"
+                                            CommandParameter="{Binding .}">
+                                        <Button.IsEnabled>
+                                            <MultiBinding Converter="{StaticResource IsNotBusyIdConverter}">
+                                                <Binding Source="{x:Reference Root}" Path="BindingContext.BusyBookingId" />
+                                                <Binding Path="Booking.BookingId" />
+                                            </MultiBinding>
+                                        </Button.IsEnabled>
+                                    </Button>
+
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

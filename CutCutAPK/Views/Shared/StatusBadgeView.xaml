@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="CutCutAPK.Views.Shared.StatusBadgeView"
+             HorizontalOptions="Start"
+             VerticalOptions="Center">
+
+    <!-- Colored pill for a booking status — reused by MyBookings, BookingDetail, and
+         TodayAppointments. Mirrors the web app's shared/components/status-badge component:
+         same five tones (pending/confirmed/active/success/danger), same status -> tone mapping.
+         The tone colors are set in code-behind rather than as XAML styles because which tone
+         applies is computed from the bound StatusId, not fixed per-instance. -->
+    <Border x:Name="Pill"
+            Stroke="Transparent"
+            StrokeShape="RoundRectangle 999"
+            Padding="10,3"
+            HorizontalOptions="Start">
+        <Label x:Name="PillLabel"
+               FontSize="12"
+               FontAttributes="Bold" />
+    </Border>
+</ContentView>

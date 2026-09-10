@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:CutCutAPK.ViewModels.Salon"
+             xmlns:converters="clr-namespace:CutCutAPK.Common.Converters"
+             x:Class="CutCutAPK.Views.Salon.SalonSettings.SalonSettingsPage"
+             x:DataType="viewModels:SalonSettingsViewModel"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource BrandBackground}">
+
+    <ContentPage.Resources>
+        <converters:StringNullOrEmptyToBoolConverter x:Key="HasTextConverter" />
+        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
+        <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,*">
+
+        <!-- app-header -->
+        <Grid Grid.Row="0" RowDefinitions="Auto,1" BackgroundColor="{StaticResource BrandSurface}">
+            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="20,14" ColumnSpacing="12">
+                <HorizontalStackLayout Grid.Column="0" Spacing="10">
+                    <Border Style="{StaticResource AuthBrandMark}">
+                        <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
+                    </Border>
+                    <Label Text="CutCut for Salons" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
+                </HorizontalStackLayout>
+                <HorizontalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="Start">
+                    <Button Text="Today" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToTodayCommand}" />
+                    <Button Text="Services" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToServicesCommand}" IsVisible="{Binding IsOwner}" />
+                    <Button Text="Staff" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToStaffCommand}" IsVisible="{Binding IsOwner}" />
+                    <Button Text="Settings" Style="{StaticResource HeaderNavButtonActive}" Command="{Binding GoToSettingsCommand}" IsVisible="{Binding IsOwner}" />
+                </HorizontalStackLayout>
+                <Button Grid.Column="2" Text="Log out" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
+            </Grid>
+            <BoxView Grid.Row="1" Color="{StaticResource BrandBorder}" HeightRequest="1" />
+        </Grid>
+
+        <ScrollView Grid.Row="1">
+            <VerticalStackLayout Padding="24" Spacing="0" MaximumWidthRequest="480" HorizontalOptions="Center">
+
+                <Label Text="Salon settings" Style="{StaticResource PageTitle}" Margin="0,0,0,2" />
+                <Label Text="Update your salon's details. Turning it off hides it from customer search." Style="{StaticResource PageSubtitle}" Margin="0,0,0,20" />
+
+                <Border Style="{StaticResource AlertErrorBorder}"
+                        Margin="0,0,0,18"
+                        IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
+                </Border>
+
+                <Border Style="{StaticResource AlertSuccessBorder}"
+                        Margin="0,0,0,18"
+                        IsVisible="{Binding InfoMessage, Converter={StaticResource HasTextConverter}}">
+                    <Label Text="{Binding InfoMessage}" Style="{StaticResource AlertSuccessText}" />
+                </Border>
+
+                <Border Style="{StaticResource CardBorder}">
+                    <VerticalStackLayout Spacing="16">
+
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Salon name" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource FieldEntryBorder}">
+                                <Entry Text="{Binding Name}" Style="{StaticResource FieldEntry}" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="Address" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource FieldEntryBorder}">
+                                <Entry Text="{Binding AddressLine}" Style="{StaticResource FieldEntry}" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <VerticalStackLayout Spacing="6">
+                            <Label Text="City" Style="{StaticResource FieldLabel}" />
+                            <Border Style="{StaticResource FieldEntryBorder}">
+                                <Entry Text="{Binding City}" Style="{StaticResource FieldEntry}" />
+                            </Border>
+                        </VerticalStackLayout>
+
+                        <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
+                            <VerticalStackLayout Grid.Column="0" Spacing="6">
+                                <Label Text="Opens" Style="{StaticResource FieldLabel}" />
+                                <Border Style="{StaticResource FieldEntryBorder}">
+                                    <TimePicker Time="{Binding OpeningTime}" Style="{StaticResource FieldTimePicker}" />
+                                </Border>
+                            </VerticalStackLayout>
+                            <VerticalStackLayout Grid.Column="1" Spacing="6">
+                                <Label Text="Closes" Style="{StaticResource FieldLabel}" />
+                                <Border Style="{StaticResource FieldEntryBorder}">
+                                    <TimePicker Time="{Binding ClosingTime}" Style="{StaticResource FieldTimePicker}" />
+                                </Border>
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <HorizontalStackLayout Spacing="10">
+                            <Switch IsToggled="{Binding IsActive}" OnColor="{StaticResource BrandPrimary}" />
+                            <Label Text="Accepting bookings" Style="{StaticResource FieldLabel}" VerticalOptions="Center" FontAttributes="None" />
+                        </HorizontalStackLayout>
+
+                        <Button Text="{Binding IsSubmitting, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Save changes|Saving…'}"
+                                Command="{Binding SubmitCommand}"
+                                IsEnabled="{Binding IsSubmitting, Converter={StaticResource InverseBoolConverter}}"
+                                Style="{StaticResource PrimaryButton}" />
+
+                    </VerticalStackLayout>
+                </Border>
+
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+</ContentPage>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewModels="clr-namespace:CutCutAPK.ViewModels.Salon"
+             x:Class="CutCutAPK.Views.Salon.SalonDashboardPage"
+             x:DataType="viewModels:SalonDashboardViewModel"
+             Title="CutCut"
+             Shell.NavBarIsVisible="False"
+             BackgroundColor="{StaticResource BrandBackground}">
+
+    <!-- Placeholder landing page for SalonStaff/SalonOwner — stands in for the real salon area
+         (staff, today's appointments) so the post-login navigation and logout flow are real and
+         testable end-to-end. -->
+    <VerticalStackLayout Padding="24" VerticalOptions="Center" Spacing="16">
+        <Label Text="{Binding WelcomeMessage}" Style="{StaticResource AuthTitle}" HorizontalOptions="Center" />
+        <Label Text="{Binding RoleLabel}" Style="{StaticResource AuthSubtitle}" HorizontalOptions="Center" />
+        <Button Text="Log out"
+                Command="{Binding LogoutCommand}"
+                Style="{StaticResource PrimaryButton}"
+                Margin="0,24,0,0" />
+    </VerticalStackLayout>
+</ContentPage>
