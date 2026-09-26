@@ -17,7 +17,7 @@ public abstract partial class CustomerAreaViewModelBase : AuthenticatedViewModel
     }
 
     [RelayCommand]
-    private Task GoToSalonSearchAsync() => NavigationService.NavigateToAsync(Routes.SalonSearch);
+    private Task GoToSalonSearchAsync() => NavigationService.NavigateToRootAsync(Routes.SalonSearch);
 
     [RelayCommand]
     private Task GoToMyBookingsAsync() => NavigationService.NavigateToAsync(Routes.MyBookings);

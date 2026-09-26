@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using CutCutAPK.Common.Exceptions;
 using CutCutAPK.Models.Salons;
+using CutCutAPK.Navigation;
 using CutCutAPK.Services.Auth;
 using CutCutAPK.Services.Salons;
 using CutCutAPK.ViewModels.Base;

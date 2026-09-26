@@ -5,14 +5,11 @@ using CutCutAPK.Views.Customer.BookingCreate;
 using CutCutAPK.Views.Customer.BookingDetail;
 using CutCutAPK.Views.Customer.MyBookings;
 using CutCutAPK.Views.Customer.SalonDetail;
-using CutCutAPK.Views.Customer.SalonSearch;
 using CutCutAPK.Views.Salon;
 using CutCutAPK.Views.Salon.SalonCreate;
-using CutCutAPK.Views.Salon.SalonHome;
 using CutCutAPK.Views.Salon.SalonServices;
 using CutCutAPK.Views.Salon.SalonSettings;
 using CutCutAPK.Views.Salon.SalonStaff;
-using CutCutAPK.Views.Salon.TodayAppointments;
 
 namespace CutCutAPK
 {
@@ -29,20 +26,17 @@ namespace CutCutAPK
             Routing.RegisterRoute(Routes.CustomerDashboard, typeof(CustomerDashboardPage));
             Routing.RegisterRoute(Routes.SalonDashboard, typeof(SalonDashboardPage));
 
-            // -- Customer area --
-            Routing.RegisterRoute(Routes.SalonSearch, typeof(SalonSearchPage));
+            // -- Customer area (SalonSearch is in AppShell.xaml) --
             Routing.RegisterRoute(Routes.SalonDetail, typeof(SalonDetailPage));
             Routing.RegisterRoute(Routes.BookingCreate, typeof(BookingCreatePage));
             Routing.RegisterRoute(Routes.BookingDetail, typeof(BookingDetailPage));
             Routing.RegisterRoute(Routes.MyBookings, typeof(MyBookingsPage));
 
-            // -- Salon area --
-            Routing.RegisterRoute(Routes.SalonHome, typeof(SalonHomePage));
+            // -- Salon area (SalonHome and TodayAppointments are in AppShell.xaml) --
             Routing.RegisterRoute(Routes.SalonCreate, typeof(SalonCreatePage));
             Routing.RegisterRoute(Routes.SalonServices, typeof(SalonServicesPage));
             Routing.RegisterRoute(Routes.SalonSettings, typeof(SalonSettingsPage));
             Routing.RegisterRoute(Routes.SalonStaff, typeof(SalonStaffPage));
-            Routing.RegisterRoute(Routes.TodayAppointments, typeof(TodayAppointmentsPage));
         }
     }
 }

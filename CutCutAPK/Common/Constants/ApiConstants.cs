@@ -21,13 +21,23 @@ public static class ApiConstants
 #if DEBUG
     // The Android emulator can't resolve the host machine's "localhost" — 10.0.2.2 is the
     // emulator's documented alias for it. Testing on a physical device instead requires swapping
-    // this to the host machine's real LAN IP. Port 7258 + scheme match CutCut.API's "https"
-    // launch profile (Properties/launchSettings.json) — its self-signed dev certificate is
-    // trusted via DevCertHandler.Create() below, DEBUG-only.
+    // this to the host machine's real LAN IP.
+    //
+    // Using the plain-HTTP port (5186, CutCut.API's "http" launch profile) rather than the
+    // HTTPS one (7258) deliberately: whichever profile you actually run CutCut.API under is
+    // whichever port you must point this at, and cleartext to 10.0.2.2/localhost is already
+    // allow-listed in Platforms/Android/Resources/xml/network_security_config.xml. Android's
+    // native HTTP handler used to make this dangerous (a connection problem there surfaces as an
+    // unmarshalable Android.Runtime.JavaProxyThrowable that crashes the app instead of a
+    // catchable HttpRequestException, and it also ignores DevCertHandler's dev-cert trust
+    // bypass) — CutCutAPK.csproj now sets <UseNativeHttpHandler>false</UseNativeHttpHandler> for
+    // Android, forcing the fully-managed SocketsHttpHandler, which fixes both problems and makes
+    // plain HTTP here just as safe as it is on every other platform. If you switch CutCut.API
+    // back to its "https" profile, change this back to "https://10.0.2.2:7258/api/v1/".
     public static readonly string BaseUrl =
         DeviceInfo.Platform == DevicePlatform.Android
-            ? "https://10.0.2.2:7258/api/v1/"
-            : "https://localhost:7258/api/v1/";
+            ? "http://10.0.2.2:5186/api/v1/"
+            : "http://localhost:5186/api/v1/";
 #else
     // TODO: replace with the deployed API's base URL before shipping a production build —
     // same requirement the web app calls out in environment.prod.ts.

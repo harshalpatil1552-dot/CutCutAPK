@@ -4,16 +4,31 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:auth="clr-namespace:CutCutAPK.Views.Auth"
+    xmlns:search="clr-namespace:CutCutAPK.Views.Customer.SalonSearch"
+    xmlns:salonhome="clr-namespace:CutCutAPK.Views.Salon.SalonHome"
+    xmlns:today="clr-namespace:CutCutAPK.Views.Salon.TodayAppointments"
     Shell.FlyoutBehavior="Disabled"
     Title="CutCut">
 
-    <!-- Login is the only statically-declared route: it's the app's true entry point (see
-         App.xaml.cs), and the flyout stays disabled since there's no signed-in chrome to show
-         here. CustomerDashboard/SalonDashboard/Register are registered as flat routes in
-         AppShell.xaml.cs and reached purely via GoToAsync — they're deliberately not modeled as
-         ShellContent tabs since there's no shared shell UI between them yet. -->
+    <!-- Login is the start page. The 3 pages below are opened with "//route" after login, so
+         they need to be ShellContent here. Other pages are registered in AppShell.xaml.cs. -->
     <ShellContent
         Route="login"
         ContentTemplate="{DataTemplate auth:LoginPage}" />
+
+    <ShellContent
+        Route="salonsearch"
+        FlyoutItemIsVisible="False"
+        ContentTemplate="{DataTemplate search:SalonSearchPage}" />
+
+    <ShellContent
+        Route="salonhome"
+        FlyoutItemIsVisible="False"
+        ContentTemplate="{DataTemplate salonhome:SalonHomePage}" />
+
+    <ShellContent
+        Route="todayappointments"
+        FlyoutItemIsVisible="False"
+        ContentTemplate="{DataTemplate today:TodayAppointmentsPage}" />
 
 </Shell>

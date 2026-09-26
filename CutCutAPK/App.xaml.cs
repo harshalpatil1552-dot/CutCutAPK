@@ -27,11 +27,19 @@ namespace CutCutAPK
 
         private async Task RestoreSessionAsync()
         {
-            await _authService.InitializeAsync();
-
-            if (_authService.IsAuthenticated)
+            // if restore fails, go to login instead of crashing the app
+            try
             {
-                await Shell.Current.GoToAsync($"//{RoleRouting.HomeRoute(_authService.CurrentUser?.RoleName)}");
+                await _authService.InitializeAsync();
+
+                if (_authService.IsAuthenticated)
+                {
+                    await Shell.Current.GoToAsync($"//{RoleRouting.HomeRoute(_authService.CurrentUser?.RoleName)}");
+                }
+            }
+            catch (Exception)
+            {
+                await _authService.LogoutAsync();
             }
         }
     }

@@ -25,7 +25,7 @@ public abstract partial class SalonAreaViewModelBase : AuthenticatedViewModelBas
     public bool IsOwner => AuthService.CurrentUser?.RoleName == RoleName.SalonOwner;
 
     [RelayCommand]
-    private Task GoToTodayAsync() => NavigationService.NavigateToAsync(Routes.TodayAppointments);
+    private Task GoToTodayAsync() => NavigationService.NavigateToRootAsync(Routes.TodayAppointments);
 
     [RelayCommand]
     private Task GoToServicesAsync() => NavigationService.NavigateToAsync(Routes.SalonServices);
