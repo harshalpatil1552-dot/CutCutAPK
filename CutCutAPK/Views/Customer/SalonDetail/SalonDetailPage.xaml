@@ -9,6 +9,7 @@
              x:Name="Root"
              x:DataType="viewModels:SalonDetailViewModel"
              Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="True"
              BackgroundColor="{StaticResource BrandBackground}">
 
     <ContentPage.Resources>
@@ -16,116 +17,142 @@
         <converters:RatingToTextConverter x:Key="RatingToTextConverter" />
         <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
         <converters:IsZeroConverter x:Key="IsZeroConverter" />
+        <converters:SalonPhotoSourceConverter x:Key="SalonPhotoSourceConverter" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="0">
 
-        <Grid Grid.Row="0" RowDefinitions="Auto,1" BackgroundColor="{StaticResource BrandSurface}">
-            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="20,14" ColumnSpacing="12">
-                <HorizontalStackLayout Grid.Column="0" Spacing="10">
-                    <Border Style="{StaticResource AuthBrandMark}">
-                        <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
-                    </Border>
-                    <Label Text="CutCut" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-                <HorizontalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="Start">
-                    <Button Text="Find a salon" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToSalonSearchCommand}" />
-                    <Button Text="My bookings" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToMyBookingsCommand}" />
-                </HorizontalStackLayout>
-                <Button Grid.Column="2" Text="Log out" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
-            </Grid>
-            <BoxView Grid.Row="1" Color="{StaticResource BrandBorder}" HeightRequest="1" />
-        </Grid>
+            <Label Text="&#8592; Back" Style="{StaticResource BackLink}" Margin="0,0,0,14">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoBackCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
 
-        <ScrollView Grid.Row="1">
-            <VerticalStackLayout Padding="24" Spacing="0">
+            <Border Style="{StaticResource AlertErrorBorder}"
+                    Margin="0,0,0,16"
+                    IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
+            </Border>
 
-                <Border Style="{StaticResource AlertErrorBorder}"
-                        Margin="0,0,0,16"
-                        IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
-                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
+            <VerticalStackLayout Spacing="0" IsVisible="{Binding Salon, Converter={StaticResource IsNotNullConverter}}">
+
+                <!-- Photo banner, over a cream placeholder when the salon has none. -->
+                <Border StrokeThickness="0" StrokeShape="RoundRectangle 16" HeightRequest="190" Margin="0,0,0,16">
+                    <Grid>
+                        <Border Background="{StaticResource AuthHeroBrush}" StrokeThickness="0">
+                            <Image Source="badge_image.svg" WidthRequest="36" HeightRequest="36"
+                                   HorizontalOptions="Center" VerticalOptions="Center" />
+                        </Border>
+                        <Image Source="{Binding Salon, Converter={StaticResource SalonPhotoSourceConverter}}"
+                               Aspect="AspectFill"
+                               IsVisible="{Binding Salon.HasPhoto}" />
+                    </Grid>
                 </Border>
 
-                <VerticalStackLayout Spacing="4" Margin="0,0,0,20" IsVisible="{Binding Salon, Converter={StaticResource IsNotNullConverter}}">
-                    <Label Text="{Binding Salon.Name}" Style="{StaticResource PageTitle}" />
-                    <Label Text="{Binding Salon.AddressLine}" Style="{StaticResource PageSubtitle}" />
-                    <Label Text="{Binding Salon.City}" Style="{StaticResource PageSubtitle}" />
-                    <Label Text="{Binding Salon.AvgRating, Converter={StaticResource RatingToTextConverter}}" Style="{StaticResource PageSubtitle}" />
-                </VerticalStackLayout>
+                <Label Text="{Binding Salon.Name}" Style="{StaticResource AuthHeroTitle}" />
+                <Label Style="{StaticResource PageSubtitle}" Margin="0,4,0,0">
+                    <Label.FormattedText>
+                        <FormattedString>
+                            <Span Text="{Binding Salon.AddressLine}" />
+                            <Span Text=", " />
+                            <Span Text="{Binding Salon.City}" />
+                        </FormattedString>
+                    </Label.FormattedText>
+                </Label>
+                <HorizontalStackLayout Spacing="14" Margin="0,6,0,22">
+                    <HorizontalStackLayout Spacing="4" IsVisible="{Binding Salon.OpeningTime, Converter={StaticResource IsNotNullConverter}}">
+                        <Image Source="badge_clock.svg" WidthRequest="14" HeightRequest="14" VerticalOptions="Center" />
+                        <Label Style="{StaticResource CardMeta}">
+                            <Label.Text>
+                                <MultiBinding StringFormat="{}Open {0} – {1}">
+                                    <Binding Path="Salon.OpeningTime" />
+                                    <Binding Path="Salon.ClosingTime" />
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
+                    </HorizontalStackLayout>
+                    <HorizontalStackLayout Spacing="4">
+                        <Image Source="badge_star.svg" WidthRequest="14" HeightRequest="14" VerticalOptions="Center" />
+                        <Label Text="{Binding Salon.AvgRating, Converter={StaticResource RatingToTextConverter}}" Style="{StaticResource CardMeta}" />
+                    </HorizontalStackLayout>
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
 
-                <Label Text="Services" Style="{StaticResource CardTitle}" Margin="0,0,0,12" />
+            <Label Text="Services" Style="{StaticResource SectionHeading}" Margin="0,0,0,12" />
 
-                <Label Text="Loading services…" Style="{StaticResource LoadingLabel}" IsVisible="{Binding IsLoading}" />
+            <Label Text="Loading services…" Style="{StaticResource LoadingLabel}" IsVisible="{Binding IsLoading}" />
 
-                <VerticalStackLayout Spacing="6" IsVisible="{Binding ShowEmptyServices}" Margin="0,0,0,16">
+            <Border Style="{StaticResource CreamEmptyStateBorder}" IsVisible="{Binding ShowEmptyServices}" Margin="0,0,0,16">
+                <VerticalStackLayout Spacing="6">
                     <Label Text="No services listed yet" Style="{StaticResource EmptyStateTitle}" />
                     <Label Text="This salon hasn't added any services." Style="{StaticResource EmptyStateSubtitle}" />
                 </VerticalStackLayout>
+            </Border>
 
-                <CollectionView ItemsSource="{Binding Services}" Margin="0,0,0,20">
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="catalog:ServiceResponseDto">
-                            <Border Style="{StaticResource CardBorder}">
-                                <Grid ColumnDefinitions="*,Auto">
-                                    <VerticalStackLayout Grid.Column="0" Spacing="4">
-                                        <Label Text="{Binding Name}" Style="{StaticResource CardTitle}" />
-                                        <HorizontalStackLayout Spacing="14">
-                                            <Label Style="{StaticResource CardMeta}">
-                                                <Label.Text>
-                                                    <Binding Path="DurationMinutes" StringFormat="{}{0} min" />
-                                                </Label.Text>
-                                            </Label>
-                                            <Label Style="{StaticResource CardMeta}">
-                                                <Label.Text>
-                                                    <Binding Path="Price" StringFormat="₹{0}" />
-                                                </Label.Text>
-                                            </Label>
-                                        </HorizontalStackLayout>
-                                    </VerticalStackLayout>
-                                    <Button Grid.Column="1"
-                                            Text="Book"
-                                            Style="{StaticResource SmallButtonPrimary}"
-                                            VerticalOptions="Center"
-                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.BookCommand}"
-                                            CommandParameter="{Binding .}" />
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+            <CollectionView ItemsSource="{Binding Services}" Margin="0,0,0,24">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="catalog:ServiceResponseDto">
+                        <Border Style="{StaticResource CardBorder}">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                    <Label Text="{Binding Name}" Style="{StaticResource CardTitle}" />
+                                    <HorizontalStackLayout Spacing="14">
+                                        <Label Style="{StaticResource CardMeta}">
+                                            <Label.Text>
+                                                <Binding Path="DurationMinutes" StringFormat="{}{0} min" />
+                                            </Label.Text>
+                                        </Label>
+                                        <Label Style="{StaticResource CardMeta}">
+                                            <Label.Text>
+                                                <Binding Path="Price" StringFormat="₹{0}" />
+                                            </Label.Text>
+                                        </Label>
+                                    </HorizontalStackLayout>
+                                </VerticalStackLayout>
+                                <Button Grid.Column="1"
+                                        Text="Book"
+                                        Style="{StaticResource SmallGoldButton}"
+                                        VerticalOptions="Center"
+                                        Command="{Binding Source={x:Reference Root}, Path=BindingContext.BookCommand}"
+                                        CommandParameter="{Binding .}" />
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
-                <Label Text="Reviews" Style="{StaticResource CardTitle}" Margin="0,8,0,12" />
+            <Label Text="Reviews" Style="{StaticResource SectionHeading}" Margin="0,0,0,12" />
 
-                <Label Text="No reviews yet." Style="{StaticResource LoadingLabel}"
-                       IsVisible="{Binding Reviews.Count, Converter={StaticResource IsZeroConverter}}" />
+            <Label Text="No reviews yet." Style="{StaticResource CardSubtitle}"
+                   IsVisible="{Binding Reviews.Count, Converter={StaticResource IsZeroConverter}}" />
 
-                <CollectionView ItemsSource="{Binding Reviews}">
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="reviews:ReviewResponseDto">
-                            <Border Style="{StaticResource CardBorder}">
-                                <Grid ColumnDefinitions="*,Auto">
-                                    <VerticalStackLayout Grid.Column="0" Spacing="4">
-                                        <Label Text="{Binding CustomerName}" Style="{StaticResource CardTitle}" />
-                                        <Label Text="{Binding Comment, TargetNullValue='No comment left.'}" Style="{StaticResource CardSubtitle}" />
-                                    </VerticalStackLayout>
-                                    <Label Grid.Column="1" Style="{StaticResource CardMeta}" VerticalOptions="Center">
-                                        <Label.Text>
-                                            <Binding Path="Rating" StringFormat="⭐ {0}/5" />
-                                        </Label.Text>
-                                    </Label>
-                                </Grid>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+            <CollectionView ItemsSource="{Binding Reviews}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="reviews:ReviewResponseDto">
+                        <Border Style="{StaticResource CardBorder}">
+                            <Grid ColumnDefinitions="*,Auto">
+                                <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                    <Label Text="{Binding CustomerName}" Style="{StaticResource CardTitle}" />
+                                    <Label Text="{Binding Comment, TargetNullValue='No comment left.'}" Style="{StaticResource CardSubtitle}" />
+                                </VerticalStackLayout>
+                                <Label Grid.Column="1" Style="{StaticResource CardMeta}" VerticalOptions="Center">
+                                    <Label.Text>
+                                        <Binding Path="Rating" StringFormat="⭐ {0}/5" />
+                                    </Label.Text>
+                                </Label>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
-            </VerticalStackLayout>
-        </ScrollView>
-    </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

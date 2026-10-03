@@ -39,6 +39,9 @@ public sealed partial class LoginViewModel : ViewModelBase
     [ObservableProperty]
     private string? passwordError;
 
+    [ObservableProperty]
+    private bool isPasswordVisible;
+
     partial void OnPhoneOrEmailChanged(string value)
     {
         if (_phoneOrEmailTouched)
@@ -80,9 +83,13 @@ public sealed partial class LoginViewModel : ViewModelBase
         PhoneOrEmailError = null;
         PasswordError = null;
         ErrorMessage = null;
+        IsPasswordVisible = false;
         _phoneOrEmailTouched = false;
         _passwordTouched = false;
     }
+
+    [RelayCommand]
+    private void ToggleShowPassword() => IsPasswordVisible = !IsPasswordVisible;
 
     [RelayCommand(CanExecute = nameof(CanSubmit))]
     private async Task SubmitAsync(CancellationToken cancellationToken)

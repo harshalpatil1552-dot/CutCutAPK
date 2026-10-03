@@ -5,30 +5,58 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:auth="clr-namespace:CutCutAPK.Views.Auth"
     xmlns:search="clr-namespace:CutCutAPK.Views.Customer.SalonSearch"
+    xmlns:mybookings="clr-namespace:CutCutAPK.Views.Customer.MyBookings"
     xmlns:salonhome="clr-namespace:CutCutAPK.Views.Salon.SalonHome"
     xmlns:today="clr-namespace:CutCutAPK.Views.Salon.TodayAppointments"
+    xmlns:services="clr-namespace:CutCutAPK.Views.Salon.SalonServices"
+    xmlns:staff="clr-namespace:CutCutAPK.Views.Salon.SalonStaff"
+    xmlns:settings="clr-namespace:CutCutAPK.Views.Salon.SalonSettings"
     Shell.FlyoutBehavior="Disabled"
+    Shell.TabBarBackgroundColor="White"
+    Shell.TabBarTitleColor="{StaticResource AuthGold}"
+    Shell.TabBarUnselectedColor="{StaticResource AuthNavyMuted}"
     Title="CutCut">
 
-    <!-- Login is the start page. The 3 pages below are opened with "//route" after login, so
+    <!-- Login is the start page. The pages below are opened with "//route" after login, so
          they need to be ShellContent here. Other pages are registered in AppShell.xaml.cs. -->
     <ShellContent
         Route="login"
         ContentTemplate="{DataTemplate auth:LoginPage}" />
 
-    <ShellContent
-        Route="salonsearch"
-        FlyoutItemIsVisible="False"
-        ContentTemplate="{DataTemplate search:SalonSearchPage}" />
+    <!-- Customer bottom tab bar — mirrors the web app's customer-shell nav (Find a salon /
+         My bookings). Salon detail, booking create and booking detail are pushed on top of
+         whichever tab they were opened from (see AppShell.xaml.cs). -->
+    <TabBar Route="customerareatabs">
+        <Tab Title="Find a salon" Icon="tab_find.svg">
+            <ShellContent Route="salonsearch" ContentTemplate="{DataTemplate search:SalonSearchPage}" />
+        </Tab>
+        <Tab Title="My bookings" Icon="tab_bookings.svg">
+            <ShellContent Route="mybookings" ContentTemplate="{DataTemplate mybookings:MyBookingsPage}" />
+        </Tab>
+    </TabBar>
 
     <ShellContent
         Route="salonhome"
         FlyoutItemIsVisible="False"
         ContentTemplate="{DataTemplate salonhome:SalonHomePage}" />
 
-    <ShellContent
-        Route="todayappointments"
-        FlyoutItemIsVisible="False"
-        ContentTemplate="{DataTemplate today:TodayAppointmentsPage}" />
+    <!-- The salon-owner/staff bottom tab bar — mirrors the web app's salon-shell top nav
+         (Today/Services/Staff/Settings). All 4 tabs show for every signed-in salon user right
+         now; the web app hides the last 3 from non-owners (@if (isOwner())) — replicating that
+         here needs role-aware tab construction in code and hasn't been done yet. -->
+    <TabBar Route="salonareatabs">
+        <Tab Title="Today" Icon="tab_today.svg">
+            <ShellContent Route="todayappointments" ContentTemplate="{DataTemplate today:TodayAppointmentsPage}" />
+        </Tab>
+        <Tab Title="Services" Icon="tab_services.svg">
+            <ShellContent Route="salonservices" ContentTemplate="{DataTemplate services:SalonServicesPage}" />
+        </Tab>
+        <Tab Title="Staff" Icon="tab_staff.svg">
+            <ShellContent Route="salonstaff" ContentTemplate="{DataTemplate staff:SalonStaffPage}" />
+        </Tab>
+        <Tab Title="Settings" Icon="tab_settings.svg">
+            <ShellContent Route="salonsettings" ContentTemplate="{DataTemplate settings:SalonSettingsPage}" />
+        </Tab>
+    </TabBar>
 
 </Shell>

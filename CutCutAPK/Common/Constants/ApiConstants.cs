@@ -19,28 +19,16 @@ public static class ApiConstants
     // "v1" the moment any relative route is combined with it (e.g. "https://host/api/v1" +
     // "auth/login" resolves to ".../api/auth/login", not ".../api/v1/auth/login").
 #if DEBUG
-    // The Android emulator can't resolve the host machine's "localhost" — 10.0.2.2 is the
-    // emulator's documented alias for it. Testing on a physical device instead requires swapping
-    // this to the host machine's real LAN IP.
-    //
-    // Using the plain-HTTP port (5186, CutCut.API's "http" launch profile) rather than the
-    // HTTPS one (7258) deliberately: whichever profile you actually run CutCut.API under is
-    // whichever port you must point this at, and cleartext to 10.0.2.2/localhost is already
-    // allow-listed in Platforms/Android/Resources/xml/network_security_config.xml. Android's
-    // native HTTP handler used to make this dangerous (a connection problem there surfaces as an
-    // unmarshalable Android.Runtime.JavaProxyThrowable that crashes the app instead of a
-    // catchable HttpRequestException, and it also ignores DevCertHandler's dev-cert trust
-    // bypass) — CutCutAPK.csproj now sets <UseNativeHttpHandler>false</UseNativeHttpHandler> for
-    // Android, forcing the fully-managed SocketsHttpHandler, which fixes both problems and makes
-    // plain HTTP here just as safe as it is on every other platform. If you switch CutCut.API
-    // back to its "https" profile, change this back to "https://10.0.2.2:7258/api/v1/".
-    public static readonly string BaseUrl =
-        DeviceInfo.Platform == DevicePlatform.Android
-            ? "http://10.0.2.2:5186/api/v1/"
-            : "http://localhost:5186/api/v1/";
+    // A Cloudflare quick tunnel (`cloudflared tunnel --url http://localhost:5186`) pointed at
+    // CutCut.API's "http" launch profile — reachable from the emulator, a physical device on any
+    // network, or anywhere else, unlike 10.0.2.2 (emulator-only) or a LAN IP (same-network-only).
+    // The trade-off: cloudflared's free quick tunnels get a new random hostname every time you
+    // restart it, so this literal has to be updated each session — see the run-tunnel.bat helper
+    // (if present) or re-run cloudflared and paste the new https://*.trycloudflare.com URL here.
+    public static readonly string BaseUrl = "https://cal-sphere-various-heroes.trycloudflare.com/api/v1/";
 #else
     // TODO: replace with the deployed API's base URL before shipping a production build —
     // same requirement the web app calls out in environment.prod.ts.
-    public static readonly string BaseUrl = "https://api.cutcut.example.com/api/v1/";
+    public static readonly string BaseUrl = "https://cal-sphere-various-heroes.trycloudflare.com/api/v1/";
 #endif
 }

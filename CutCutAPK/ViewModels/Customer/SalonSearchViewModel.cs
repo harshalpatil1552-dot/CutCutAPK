@@ -37,7 +37,7 @@ public sealed partial class SalonSearchViewModel : CustomerAreaViewModelBase
     private bool hasSearched;
 
     /// <summary>True once loading has finished and nothing came back — drives the empty state,
-    /// same condition as the web app's `salons().length === 0 && hasSearched()`.</summary>
+    /// same condition as the web app's `salons().length === 0 &amp;&amp; hasSearched()`.</summary>
     public bool ShowEmptyState => !IsLoading && HasSearched && Salons.Count == 0;
 
     public async Task LoadAsync()

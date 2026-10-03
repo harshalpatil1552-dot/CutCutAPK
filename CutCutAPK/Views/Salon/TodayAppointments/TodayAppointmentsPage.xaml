@@ -16,40 +16,27 @@
         <converters:IsNotBusyIdConverter x:Key="IsNotBusyIdConverter" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="*">
 
-        <!-- app-header -->
-        <Grid Grid.Row="0" RowDefinitions="Auto,1" BackgroundColor="{StaticResource BrandSurface}">
-            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="20,14" ColumnSpacing="12">
-                <HorizontalStackLayout Grid.Column="0" Spacing="10">
-                    <Border Style="{StaticResource AuthBrandMark}">
-                        <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
-                    </Border>
-                    <Label Text="CutCut for Salons" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-                <HorizontalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="Start">
-                    <Button Text="Today" Style="{StaticResource HeaderNavButtonActive}" Command="{Binding GoToTodayCommand}" />
-                    <Button Text="Services" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToServicesCommand}" IsVisible="{Binding IsOwner}" />
-                    <Button Text="Staff" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToStaffCommand}" IsVisible="{Binding IsOwner}" />
-                    <Button Text="Settings" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToSettingsCommand}" IsVisible="{Binding IsOwner}" />
-                </HorizontalStackLayout>
-                <Button Grid.Column="2" Text="Log out" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
-            </Grid>
-            <BoxView Grid.Row="1" Color="{StaticResource BrandBorder}" HeightRequest="1" />
-        </Grid>
-
-        <ScrollView Grid.Row="1">
+        <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="24" Spacing="0">
 
                 <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,18">
                     <VerticalStackLayout Grid.Column="0" Spacing="2">
-                        <Label Text="Today's appointments" Style="{StaticResource PageTitle}" />
+                        <Label Text="Today's appointments" Style="{StaticResource AuthHeroTitle}" />
                         <Label Text="Check customers in with their OTP, then move them through the service." Style="{StaticResource PageSubtitle}" />
                     </VerticalStackLayout>
-                    <Button Grid.Column="1" Text="Refresh"
-                            Style="{StaticResource SmallButtonOutline}"
-                            VerticalOptions="Center"
-                            Command="{Binding RefreshCommand}" />
+                    <VerticalStackLayout Grid.Column="1" Spacing="8" HorizontalOptions="End">
+                        <Button Text="Refresh"
+                                Style="{StaticResource SmallButtonOutline}"
+                                HorizontalOptions="End"
+                                Command="{Binding RefreshCommand}" />
+                        <Label Text="Log out" Style="{StaticResource AuthInlineLink}" HorizontalOptions="End">
+                            <Label.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding LogoutCommand}" />
+                            </Label.GestureRecognizers>
+                        </Label>
+                    </VerticalStackLayout>
                 </Grid>
 
                 <Border Style="{StaticResource AlertErrorBorder}"
@@ -60,10 +47,16 @@
 
                 <Label Text="Loading appointments…" Style="{StaticResource LoadingLabel}" IsVisible="{Binding IsLoading}" />
 
-                <VerticalStackLayout Spacing="6" IsVisible="{Binding ShowEmptyState}">
-                    <Label Text="No appointments today" Style="{StaticResource EmptyStateTitle}" />
-                    <Label Text="Bookings for today will show up here once customers pay." Style="{StaticResource EmptyStateSubtitle}" />
-                </VerticalStackLayout>
+                <Border BackgroundColor="{StaticResource AuthCreamTop}"
+                        Stroke="Transparent"
+                        StrokeShape="RoundRectangle 16"
+                        Padding="24"
+                        IsVisible="{Binding ShowEmptyState}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="No appointments today" Style="{StaticResource EmptyStateTitle}" />
+                        <Label Text="Bookings for today will show up here once customers pay." Style="{StaticResource EmptyStateSubtitle}" />
+                    </VerticalStackLayout>
+                </Border>
 
                 <CollectionView ItemsSource="{Binding Rows}">
                     <CollectionView.ItemsLayout>
@@ -99,7 +92,9 @@
                                     <!-- Confirmed: OTP entry + check-in + cancel -->
                                     <HorizontalStackLayout Spacing="8"
                                             IsVisible="{Binding Booking.BookingStatusId, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=Confirmed}">
-                                        <Border Style="{StaticResource InlineEntryBorder}">
+                                        <Border Style="{StaticResource InlineEntryBorder}"
+                                                BackgroundColor="{StaticResource AuthCreamTop}"
+                                                Stroke="{StaticResource AuthCreamFieldBorder}">
                                             <Entry Text="{Binding OtpInput}"
                                                    Placeholder="6-digit OTP"
                                                    Keyboard="Numeric"
@@ -107,7 +102,7 @@
                                                    Style="{StaticResource InlineEntry}" />
                                         </Border>
                                         <Button Text="Check in"
-                                                Style="{StaticResource SmallButtonPrimary}"
+                                                Style="{StaticResource SmallGoldButton}"
                                                 Command="{Binding Source={x:Reference Root}, Path=BindingContext.CheckInCommand}"
                                                 CommandParameter="{Binding .}">
                                             <Button.IsEnabled>
@@ -132,7 +127,7 @@
 
                                     <!-- CheckedIn: start service -->
                                     <Button Text="Start service"
-                                            Style="{StaticResource SmallButtonPrimary}"
+                                            Style="{StaticResource SmallGoldButton}"
                                             HorizontalOptions="Start"
                                             IsVisible="{Binding Booking.BookingStatusId, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=CheckedIn}"
                                             Command="{Binding Source={x:Reference Root}, Path=BindingContext.StartCommand}"
@@ -147,7 +142,7 @@
 
                                     <!-- InProgress: mark completed -->
                                     <Button Text="Mark completed"
-                                            Style="{StaticResource SmallButtonPrimary}"
+                                            Style="{StaticResource SmallGoldButton}"
                                             HorizontalOptions="Start"
                                             IsVisible="{Binding Booking.BookingStatusId, Converter={StaticResource EnumEqualsConverter}, ConverterParameter=InProgress}"
                                             Command="{Binding Source={x:Reference Root}, Path=BindingContext.CompleteCommand}"

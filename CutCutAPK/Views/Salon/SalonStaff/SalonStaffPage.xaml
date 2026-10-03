@@ -16,33 +16,22 @@
         <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="*">
 
-        <!-- app-header -->
-        <Grid Grid.Row="0" RowDefinitions="Auto,1" BackgroundColor="{StaticResource BrandSurface}">
-            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="20,14" ColumnSpacing="12">
-                <HorizontalStackLayout Grid.Column="0" Spacing="10">
-                    <Border Style="{StaticResource AuthBrandMark}">
-                        <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
-                    </Border>
-                    <Label Text="CutCut for Salons" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-                <HorizontalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="Start">
-                    <Button Text="Today" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToTodayCommand}" />
-                    <Button Text="Services" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToServicesCommand}" IsVisible="{Binding IsOwner}" />
-                    <Button Text="Staff" Style="{StaticResource HeaderNavButtonActive}" Command="{Binding GoToStaffCommand}" IsVisible="{Binding IsOwner}" />
-                    <Button Text="Settings" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToSettingsCommand}" IsVisible="{Binding IsOwner}" />
-                </HorizontalStackLayout>
-                <Button Grid.Column="2" Text="Log out" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
-            </Grid>
-            <BoxView Grid.Row="1" Color="{StaticResource BrandBorder}" HeightRequest="1" />
-        </Grid>
-
-        <ScrollView Grid.Row="1">
+        <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="24" Spacing="0">
 
-                <Label Text="Staff" Style="{StaticResource PageTitle}" Margin="0,0,0,2" />
-                <Label Text="Add team members who've registered on CutCut with a Salon Staff account." Style="{StaticResource PageSubtitle}" Margin="0,0,0,18" />
+                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,18">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="Staff" Style="{StaticResource AuthHeroTitle}" />
+                        <Label Text="Add team members who've registered on CutCut with a Salon Staff account." Style="{StaticResource PageSubtitle}" />
+                    </VerticalStackLayout>
+                    <Label Grid.Column="1" Text="Log out" Style="{StaticResource AuthInlineLink}" VerticalOptions="Start">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding LogoutCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
 
                 <Border Style="{StaticResource AlertErrorBorder}"
                         Margin="0,0,0,16"
@@ -64,12 +53,12 @@
                         <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
                             <VerticalStackLayout Grid.Column="0" Spacing="6">
                                 <Label Text="Their phone number" Style="{StaticResource FieldLabel}" />
-                                <Border Style="{StaticResource FieldEntryBorder}">
+                                <Border Style="{StaticResource CreamFieldEntryBorder}">
                                     <Entry Text="{Binding LookupPhone}"
                                            Placeholder="9876543210"
                                            Keyboard="Telephone"
                                            ReturnType="Search"
-                                           Style="{StaticResource FieldEntry}"
+                                           Style="{StaticResource CreamFieldEntry}"
                                            Completed="OnLookupPhoneCompleted" />
                                 </Border>
                             </VerticalStackLayout>
@@ -82,7 +71,7 @@
                         </Grid>
 
                         <Border Style="{StaticResource CardBorder}"
-                                BackgroundColor="{StaticResource BrandBackground}"
+                                BackgroundColor="{StaticResource AuthCreamTop}"
                                 IsVisible="{Binding FoundUser, Converter={StaticResource IsNotNullConverter}}">
                             <Grid ColumnDefinitions="*,Auto">
                                 <VerticalStackLayout Grid.Column="0" Spacing="2">
@@ -93,7 +82,7 @@
                                         Text="{Binding IsAdding, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Add to salon|Adding…'}"
                                         Command="{Binding AddFoundUserCommand}"
                                         IsEnabled="{Binding IsAdding, Converter={StaticResource InverseBoolConverter}}"
-                                        Style="{StaticResource SmallButtonPrimary}"
+                                        Style="{StaticResource SmallGoldButton}"
                                         VerticalOptions="Center" />
                             </Grid>
                         </Border>
@@ -102,10 +91,12 @@
 
                 <Label Text="Loading staff…" Style="{StaticResource LoadingLabel}" IsVisible="{Binding IsLoading}" />
 
-                <VerticalStackLayout Spacing="6" IsVisible="{Binding ShowEmptyState}" Margin="0,4,0,0">
-                    <Label Text="No staff added yet" Style="{StaticResource EmptyStateTitle}" />
-                    <Label Text="Add a staff member above to let them check customers in." Style="{StaticResource EmptyStateSubtitle}" />
-                </VerticalStackLayout>
+                <Border Style="{StaticResource CreamEmptyStateBorder}" IsVisible="{Binding ShowEmptyState}">
+                    <VerticalStackLayout Spacing="6">
+                        <Label Text="No staff added yet" Style="{StaticResource EmptyStateTitle}" />
+                        <Label Text="Add a staff member above to let them check customers in." Style="{StaticResource EmptyStateSubtitle}" />
+                    </VerticalStackLayout>
+                </Border>
 
                 <CollectionView ItemsSource="{Binding StaffMembers}">
                     <CollectionView.ItemsLayout>

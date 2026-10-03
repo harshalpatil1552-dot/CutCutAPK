@@ -4,87 +4,140 @@
              xmlns:viewModels="clr-namespace:CutCutAPK.ViewModels.Customer"
              xmlns:converters="clr-namespace:CutCutAPK.Common.Converters"
              x:Class="CutCutAPK.Views.Customer.BookingCreate.BookingCreatePage"
+             x:Name="Root"
              x:DataType="viewModels:BookingCreateViewModel"
              Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="True"
              BackgroundColor="{StaticResource BrandBackground}">
 
     <ContentPage.Resources>
         <converters:StringNullOrEmptyToBoolConverter x:Key="HasTextConverter" />
-        <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
         <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
-        <converters:BoolToTextConverter x:Key="BoolToTextConverter" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="14">
 
-        <!-- app-header: same nav block as every other customer-area screen. -->
-        <Grid Grid.Row="0" RowDefinitions="Auto,1" BackgroundColor="{StaticResource BrandSurface}">
-            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="20,14" ColumnSpacing="12">
-                <HorizontalStackLayout Grid.Column="0" Spacing="10">
-                    <Border Style="{StaticResource AuthBrandMark}">
-                        <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
+            <Label Text="&#8592; Back" Style="{StaticResource BackLink}">
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding GoBackCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+
+            <Label Text="Choose a time" Style="{StaticResource AuthHeroTitle}" />
+
+            <Border Style="{StaticResource AlertErrorBorder}"
+                    IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
+            </Border>
+
+            <!-- Service -->
+            <Border Style="{StaticResource CardBorder}"
+                    IsVisible="{Binding Service, Converter={StaticResource IsNotNullConverter}}">
+                <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                    <Border Grid.Column="0" Style="{StaticResource CardIconBadge}">
+                        <Image Source="badge_scissors.svg" />
                     </Border>
-                    <Label Text="CutCut" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-                <HorizontalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="Start">
-                    <Button Text="Find a salon" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToSalonSearchCommand}" />
-                    <Button Text="My bookings" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToMyBookingsCommand}" />
-                </HorizontalStackLayout>
-                <Button Grid.Column="2" Text="Log out" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
-            </Grid>
-            <BoxView Grid.Row="1" Color="{StaticResource BrandBorder}" HeightRequest="1" />
-        </Grid>
-
-        <ScrollView Grid.Row="1">
-            <VerticalStackLayout Padding="24" Spacing="0" MaximumWidthRequest="480" HorizontalOptions="Center">
-
-                <!-- page-heading -->
-                <Label Text="Choose a time" Style="{StaticResource PageTitle}" Margin="0,0,0,2" />
-                <Label Style="{StaticResource PageSubtitle}"
-                       Margin="0,0,0,20"
-                       IsVisible="{Binding Service, Converter={StaticResource IsNotNullConverter}}">
-                    <Label.Text>
-                        <MultiBinding StringFormat="{}{0} · {1} min · ₹{2}">
-                            <Binding Path="Service.Name" />
-                            <Binding Path="Service.DurationMinutes" />
-                            <Binding Path="Service.Price" />
-                        </MultiBinding>
-                    </Label.Text>
-                </Label>
-
-                <Border Style="{StaticResource AlertErrorBorder}"
-                        Margin="0,0,0,18"
-                        IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
-                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
-                </Border>
-
-                <!-- card: date + time form-fields, mirroring booking-create.html's two <input>s. -->
-                <Border Style="{StaticResource CardBorder}">
-                    <VerticalStackLayout Spacing="18">
-
-                        <VerticalStackLayout Spacing="6">
-                            <Label Text="Date" Style="{StaticResource FieldLabel}" />
-                            <Border Style="{StaticResource FieldEntryBorder}">
-                                <DatePicker Date="{Binding SelectedDate}" Style="{StaticResource FieldDatePicker}" />
-                            </Border>
-                        </VerticalStackLayout>
-
-                        <VerticalStackLayout Spacing="6">
-                            <Label Text="Time" Style="{StaticResource FieldLabel}" />
-                            <Border Style="{StaticResource FieldEntryBorder}">
-                                <TimePicker Time="{Binding SelectedTime}" Style="{StaticResource FieldTimePicker}" />
-                            </Border>
-                        </VerticalStackLayout>
-
-                        <Button Text="{Binding IsSubmitting, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Confirm slot|Booking…'}"
-                                Command="{Binding SubmitCommand}"
-                                IsEnabled="{Binding IsSubmitting, Converter={StaticResource InverseBoolConverter}}"
-                                Style="{StaticResource PrimaryButton}" />
-
+                    <VerticalStackLayout Grid.Column="1" Spacing="2" VerticalOptions="Center">
+                        <Label Text="Service" Style="{StaticResource CardMeta}" />
+                        <Label Style="{StaticResource CardTitle}">
+                            <Label.Text>
+                                <MultiBinding StringFormat="{}{0} · {1} min · ₹{2}">
+                                    <Binding Path="Service.Name" />
+                                    <Binding Path="Service.DurationMinutes" />
+                                    <Binding Path="Service.Price" />
+                                </MultiBinding>
+                            </Label.Text>
+                        </Label>
                     </VerticalStackLayout>
-                </Border>
+                </Grid>
+            </Border>
 
-            </VerticalStackLayout>
-        </ScrollView>
-    </Grid>
+            <!-- Date strip -->
+            <Border Style="{StaticResource CardBorder}">
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <Border Grid.Column="0" Style="{StaticResource CardIconBadge}">
+                            <Image Source="badge_calendar.svg" />
+                        </Border>
+                        <Label Grid.Column="1" Text="Date" Style="{StaticResource FieldLabel}" VerticalOptions="Center" />
+                    </Grid>
+                    <ScrollView Orientation="Horizontal" HorizontalScrollBarVisibility="Never">
+                        <HorizontalStackLayout Spacing="8"
+                                               BindableLayout.ItemsSource="{Binding AvailableDates}">
+                            <BindableLayout.ItemTemplate>
+                                <DataTemplate x:DataType="viewModels:BookingDateOption">
+                                    <Border Style="{StaticResource DatePillBorder}">
+                                        <Border.GestureRecognizers>
+                                            <TapGestureRecognizer
+                                                Command="{Binding Source={x:Reference Root}, Path=BindingContext.SelectDateCommand}"
+                                                CommandParameter="{Binding .}" />
+                                        </Border.GestureRecognizers>
+                                        <VerticalStackLayout Spacing="2">
+                                            <Label Text="{Binding DayNumber}" Style="{StaticResource DatePillNumber}" />
+                                            <Label Text="{Binding DayName}" Style="{StaticResource DatePillName}" />
+                                        </VerticalStackLayout>
+                                    </Border>
+                                </DataTemplate>
+                            </BindableLayout.ItemTemplate>
+                        </HorizontalStackLayout>
+                    </ScrollView>
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Available time slots -->
+            <Border Style="{StaticResource CardBorder}">
+                <VerticalStackLayout Spacing="12">
+                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="14">
+                        <Border Grid.Column="0" Style="{StaticResource CardIconBadge}">
+                            <Image Source="badge_clock.svg" />
+                        </Border>
+                        <Label Grid.Column="1" Text="Available time slots" Style="{StaticResource FieldLabel}" VerticalOptions="Center" />
+                    </Grid>
+
+                    <Label Text="Loading times…" Style="{StaticResource LoadingLabel}" IsVisible="{Binding IsLoadingSlots}" />
+
+                    <Label Text="No slots available on this day." Style="{StaticResource CardSubtitle}"
+                           IsVisible="{Binding ShowNoSlotsState}" />
+
+                    <FlexLayout Direction="Row" Wrap="Wrap" JustifyContent="Start"
+                                BindableLayout.ItemsSource="{Binding Slots}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="viewModels:BookingSlotOption">
+                                <Border Style="{StaticResource SlotPillBorder}" Margin="0,0,8,8">
+                                    <Border.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={x:Reference Root}, Path=BindingContext.SelectSlotCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Border.GestureRecognizers>
+                                    <Label Text="{Binding DisplayTime}" Style="{StaticResource SlotPillText}" />
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
+                    </FlexLayout>
+
+                    <HorizontalStackLayout Spacing="16" Margin="0,4,0,0">
+                        <HorizontalStackLayout Spacing="5">
+                            <Ellipse Style="{StaticResource SlotLegendDot}" Fill="{StaticResource BrandSuccess}" />
+                            <Label Text="Available" Style="{StaticResource SlotLegendText}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="5">
+                            <Ellipse Style="{StaticResource SlotLegendDot}" Fill="{StaticResource BrandPrimary}" />
+                            <Label Text="Selected" Style="{StaticResource SlotLegendText}" />
+                        </HorizontalStackLayout>
+                        <HorizontalStackLayout Spacing="5">
+                            <Ellipse Style="{StaticResource SlotLegendDot}" Fill="{StaticResource Gray200}" />
+                            <Label Text="Booked" Style="{StaticResource SlotLegendText}" />
+                        </HorizontalStackLayout>
+                    </HorizontalStackLayout>
+                </VerticalStackLayout>
+            </Border>
+
+            <Button Text="{Binding SubmitButtonText}"
+                    Command="{Binding SubmitCommand}"
+                    Style="{StaticResource AuthGoldButton}"
+                    Margin="0,6,0,0" />
+
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

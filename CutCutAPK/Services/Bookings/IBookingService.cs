@@ -7,6 +7,8 @@ public interface IBookingService
 {
     Task<BookingResponseDto> CreateAsync(BookingCreateRequestDto request, CancellationToken cancellationToken = default);
 
+    Task<List<AvailableSlotDto>> GetAvailableSlotsAsync(int salonId, int serviceId, DateOnly date, CancellationToken cancellationToken = default);
+
     Task<List<BookingResponseDto>> GetMineAsync(CancellationToken cancellationToken = default);
 
     Task<BookingResponseDto> GetByIdAsync(int bookingId, CancellationToken cancellationToken = default);

@@ -8,6 +8,7 @@
              x:Name="Root"
              x:DataType="viewModels:BookingDetailViewModel"
              Shell.NavBarIsVisible="False"
+             Shell.TabBarIsVisible="True"
              BackgroundColor="{StaticResource BrandBackground}">
 
     <ContentPage.Resources>
@@ -21,30 +22,12 @@
         <converters:OtpButtonTextConverter x:Key="OtpButtonTextConverter" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="*">
 
-        <!-- app-header -->
-        <Grid Grid.Row="0" RowDefinitions="Auto,1" BackgroundColor="{StaticResource BrandSurface}">
-            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="20,14" ColumnSpacing="12">
-                <HorizontalStackLayout Grid.Column="0" Spacing="10">
-                    <Border Style="{StaticResource AuthBrandMark}">
-                        <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
-                    </Border>
-                    <Label Text="CutCut" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-                <HorizontalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="Start">
-                    <Button Text="Find a salon" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToSalonSearchCommand}" />
-                    <Button Text="My bookings" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToMyBookingsCommand}" />
-                </HorizontalStackLayout>
-                <Button Grid.Column="2" Text="Log out" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
-            </Grid>
-            <BoxView Grid.Row="1" Color="{StaticResource BrandBorder}" HeightRequest="1" />
-        </Grid>
+        <ScrollView Grid.Row="0">
+            <VerticalStackLayout Padding="24" Spacing="14">
 
-        <ScrollView Grid.Row="1">
-            <VerticalStackLayout Padding="24" Spacing="14" MaximumWidthRequest="560" HorizontalOptions="Center">
-
-                <Label Text="&#8592; Back to my bookings" Style="{StaticResource AuthFooterLink}" Margin="0,0,0,6">
+                <Label Text="&#8592; Back to my bookings" Style="{StaticResource BackLink}" Margin="0,0,0,6">
                     <Label.GestureRecognizers>
                         <TapGestureRecognizer Command="{Binding GoToMyBookingsCommand}" />
                     </Label.GestureRecognizers>
@@ -67,7 +50,7 @@
                     <!-- page-heading -->
                     <Grid ColumnDefinitions="*,Auto">
                         <VerticalStackLayout Grid.Column="0" Spacing="2">
-                            <Label Text="{Binding Booking.ServiceName}" Style="{StaticResource PageTitle}" />
+                            <Label Text="{Binding Booking.ServiceName}" Style="{StaticResource AuthHeroTitle}" />
                             <Label Style="{StaticResource PageSubtitle}">
                                 <Label.Text>
                                     <MultiBinding StringFormat="{}{0} · {1:MMM d, yyyy h:mm tt}">
@@ -121,7 +104,7 @@
                                 <Button Text="{Binding IsPaying, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Pay Now|Starting payment…'}"
                                         Command="{Binding StartPaymentCommand}"
                                         IsEnabled="{Binding IsAnyActionBusy, Converter={StaticResource InverseBoolConverter}}"
-                                        Style="{StaticResource SmallButtonPrimary}"
+                                        Style="{StaticResource SmallGoldButton}"
                                         HorizontalOptions="Start"
                                         Margin="0,4,0,0" />
                             </VerticalStackLayout>
@@ -140,7 +123,7 @@
                                 <Button Text="{Binding IsPaying, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Simulate payment success|Confirming…'}"
                                         Command="{Binding SimulatePaymentSuccessCommand}"
                                         IsEnabled="{Binding IsAnyActionBusy, Converter={StaticResource InverseBoolConverter}}"
-                                        Style="{StaticResource SmallButtonPrimary}"
+                                        Style="{StaticResource SmallGoldButton}"
                                         HorizontalOptions="Start"
                                         Margin="0,4,0,0" />
                             </VerticalStackLayout>
@@ -166,8 +149,8 @@
                                         <Binding Path="OtpExpiresAtUtc" StringFormat="Read this out to salon staff when you arrive. Valid until {0:h:mm tt}." />
                                     </Label.Text>
                                 </Label>
-                                <Border Style="{StaticResource OtpDisplayBorder}">
-                                    <Label Text="{Binding OtpCode}" Style="{StaticResource OtpDisplayText}" />
+                                <Border Style="{StaticResource OtpDisplayBorder}" BackgroundColor="{StaticResource AuthCreamTop}" Stroke="{StaticResource AuthCreamFieldBorder}" StrokeThickness="1">
+                                    <Label Text="{Binding OtpCode}" Style="{StaticResource OtpDisplayText}" TextColor="{StaticResource AuthGoldDark}" />
                                 </Border>
                             </VerticalStackLayout>
 
@@ -224,7 +207,7 @@
                                 <Label Text="How was your visit?" Style="{StaticResource CardTitle}" />
                                 <Button Text="Rate this salon"
                                         Command="{Binding BeginReviewCommand}"
-                                        Style="{StaticResource SmallButtonPrimary}"
+                                        Style="{StaticResource SmallGoldButton}"
                                         HorizontalOptions="Start" />
                             </VerticalStackLayout>
 
@@ -272,7 +255,7 @@
 
                                 <VerticalStackLayout Spacing="6">
                                     <Label Text="Comment (optional)" Style="{StaticResource FieldLabel}" />
-                                    <Border Style="{StaticResource FieldEntryBorder}" HeightRequest="90" Padding="13,10">
+                                    <Border Style="{StaticResource CreamFieldEntryBorder}" HeightRequest="90" Padding="13,10">
                                         <Editor Text="{Binding ReviewComment}"
                                                 Placeholder="How was the service?"
                                                 TextColor="{StaticResource BrandTextPrimary}"
@@ -286,7 +269,7 @@
                                 <Button Text="{Binding IsSubmittingReview, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Submit rating|Submitting…'}"
                                         Command="{Binding SubmitReviewCommand}"
                                         IsEnabled="{Binding IsAnyActionBusy, Converter={StaticResource InverseBoolConverter}}"
-                                        Style="{StaticResource SmallButtonPrimary}"
+                                        Style="{StaticResource SmallGoldButton}"
                                         HorizontalOptions="Start" />
                             </VerticalStackLayout>
 

@@ -16,97 +16,111 @@
         <converters:IsNotNullConverter x:Key="IsNotNullConverter" />
         <converters:RatingToTextConverter x:Key="RatingToTextConverter" />
         <converters:DistanceKmToTextConverter x:Key="DistanceKmToTextConverter" />
+        <converters:SalonPhotoSourceConverter x:Key="SalonPhotoSourceConverter" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="0">
 
-        <!-- app-header: brand + customer nav (Find a salon / My bookings) + Log out -->
-        <Grid Grid.Row="0" RowDefinitions="Auto,1" BackgroundColor="{StaticResource BrandSurface}">
-            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="20,14" ColumnSpacing="12">
-                <HorizontalStackLayout Grid.Column="0" Spacing="10">
-                    <Border Style="{StaticResource AuthBrandMark}">
-                        <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
-                    </Border>
-                    <Label Text="CutCut" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-                <HorizontalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="Start">
-                    <Button Text="Find a salon" Style="{StaticResource HeaderNavButtonActive}" />
-                    <Button Text="My bookings" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToMyBookingsCommand}" />
-                </HorizontalStackLayout>
-                <Button Grid.Column="2" Text="Log out" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
-            </Grid>
-            <BoxView Grid.Row="1" Color="{StaticResource BrandBorder}" HeightRequest="1" />
-        </Grid>
-
-        <ScrollView Grid.Row="1">
-            <VerticalStackLayout Padding="24" Spacing="0">
-
-                <VerticalStackLayout Spacing="4" Margin="0,0,0,20">
-                    <Label Text="Find a salon" Style="{StaticResource PageTitle}" />
+            <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,18">
+                <VerticalStackLayout Grid.Column="0" Spacing="2">
+                    <Label Text="Find a salon" Style="{StaticResource AuthHeroTitle}" />
                     <Label Text="Search by city, or use your location to find salons nearby." Style="{StaticResource PageSubtitle}" />
                 </VerticalStackLayout>
+                <Label Grid.Column="1" Text="Log out" Style="{StaticResource AuthInlineLink}" VerticalOptions="Start">
+                    <Label.GestureRecognizers>
+                        <TapGestureRecognizer Command="{Binding LogoutCommand}" />
+                    </Label.GestureRecognizers>
+                </Label>
+            </Grid>
 
-                <Border Style="{StaticResource AlertErrorBorder}"
-                        Margin="0,0,0,16"
-                        IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
-                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
-                </Border>
+            <Border Style="{StaticResource AlertErrorBorder}"
+                    Margin="0,0,0,16"
+                    IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
+                <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
+            </Border>
 
-                <!-- Search card (form-grid-2: city field + Search/Near me buttons) -->
-                <Border Style="{StaticResource CardBorder}" Margin="0,0,0,20">
-                    <Grid ColumnDefinitions="*,Auto" ColumnSpacing="10">
-                        <VerticalStackLayout Grid.Column="0" Spacing="6">
-                            <Label Text="City" Style="{StaticResource FieldLabel}" />
-                            <Border Style="{StaticResource FieldEntryBorder}">
-                                <Entry Text="{Binding City}"
-                                       Placeholder="e.g. Pune"
-                                       ReturnType="Search"
-                                       Style="{StaticResource FieldEntry}"
-                                       Completed="OnCitySearchCompleted" />
-                            </Border>
-                        </VerticalStackLayout>
-                        <HorizontalStackLayout Grid.Column="1" Spacing="8" VerticalOptions="End">
-                            <Button Text="Search" Style="{StaticResource SmallButtonPrimary}" Command="{Binding SearchByCityCommand}" />
-                            <Button Text="📍 Near me" Style="{StaticResource SmallButtonOutline}" Command="{Binding SearchNearMeCommand}" />
-                        </HorizontalStackLayout>
+            <!-- Search card -->
+            <Border Style="{StaticResource CardBorder}" Margin="0,0,0,20">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="City" Style="{StaticResource FieldLabel}" />
+                    <Border Style="{StaticResource CreamFieldEntryBorder}">
+                        <Entry Text="{Binding City}"
+                               Placeholder="e.g. Pune"
+                               ReturnType="Search"
+                               Style="{StaticResource CreamFieldEntry}"
+                               Completed="OnCitySearchCompleted" />
+                    </Border>
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                        <Button Grid.Column="0" Text="Search" Style="{StaticResource SmallGoldButton}" Command="{Binding SearchByCityCommand}" />
+                        <Button Grid.Column="1" Text="📍 Near me" Style="{StaticResource SmallButtonOutline}" Command="{Binding SearchNearMeCommand}" />
                     </Grid>
-                </Border>
+                </VerticalStackLayout>
+            </Border>
 
-                <Label Text="Searching salons…" Style="{StaticResource LoadingLabel}" IsVisible="{Binding IsLoading}" />
+            <Label Text="Searching salons…" Style="{StaticResource LoadingLabel}" IsVisible="{Binding IsLoading}" />
 
-                <VerticalStackLayout Spacing="6" IsVisible="{Binding ShowEmptyState}" Margin="0,24,0,0">
+            <Border Style="{StaticResource CreamEmptyStateBorder}" IsVisible="{Binding ShowEmptyState}">
+                <VerticalStackLayout Spacing="6">
                     <Label Text="No salons found" Style="{StaticResource EmptyStateTitle}" />
                     <Label Text="Try a different city, or search near your current location." Style="{StaticResource EmptyStateSubtitle}" />
                 </VerticalStackLayout>
+            </Border>
 
-                <CollectionView ItemsSource="{Binding Salons}"
-                                 IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
-                    <CollectionView.ItemsLayout>
-                        <LinearItemsLayout Orientation="Vertical" ItemSpacing="12" />
-                    </CollectionView.ItemsLayout>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate x:DataType="models:SalonResponseDto">
-                            <Border Style="{StaticResource CardBorder}">
-                                <Border.GestureRecognizers>
-                                    <TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.GoToSalonCommand}"
-                                                           CommandParameter="{Binding .}" />
-                                </Border.GestureRecognizers>
-                                <VerticalStackLayout Spacing="4">
+            <CollectionView ItemsSource="{Binding Salons}"
+                            IsVisible="{Binding IsLoading, Converter={StaticResource InverseBoolConverter}}">
+                <CollectionView.ItemsLayout>
+                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="14" />
+                </CollectionView.ItemsLayout>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate x:DataType="models:SalonResponseDto">
+                        <Border Style="{StaticResource CardBorder}" Padding="0">
+                            <Border.GestureRecognizers>
+                                <TapGestureRecognizer Command="{Binding Source={x:Reference Root}, Path=BindingContext.GoToSalonCommand}"
+                                                      CommandParameter="{Binding .}" />
+                            </Border.GestureRecognizers>
+                            <VerticalStackLayout>
+                                <!-- Photo, over a cream placeholder that shows when there's none. -->
+                                <Grid HeightRequest="150">
+                                    <Border Background="{StaticResource AuthHeroBrush}" StrokeThickness="0">
+                                        <Image Source="badge_image.svg" WidthRequest="32" HeightRequest="32"
+                                               HorizontalOptions="Center" VerticalOptions="Center" />
+                                    </Border>
+                                    <Image Source="{Binding ., Converter={StaticResource SalonPhotoSourceConverter}}"
+                                           Aspect="AspectFill"
+                                           IsVisible="{Binding HasPhoto}" />
+                                </Grid>
+
+                                <VerticalStackLayout Padding="16,14" Spacing="4">
                                     <Label Text="{Binding Name}" Style="{StaticResource CardTitle}" />
                                     <Label Text="{Binding City, TargetNullValue='City not set'}" Style="{StaticResource CardSubtitle}" />
-                                    <HorizontalStackLayout Spacing="14" Margin="0,4,0,0">
-                                        <Label Text="{Binding AvgRating, Converter={StaticResource RatingToTextConverter}}" Style="{StaticResource CardMeta}" />
+                                    <HorizontalStackLayout Spacing="14" Margin="0,6,0,0">
+                                        <HorizontalStackLayout Spacing="4">
+                                            <Image Source="badge_star.svg" WidthRequest="14" HeightRequest="14" VerticalOptions="Center" />
+                                            <Label Text="{Binding AvgRating, Converter={StaticResource RatingToTextConverter}}" Style="{StaticResource CardMeta}" />
+                                        </HorizontalStackLayout>
+                                        <HorizontalStackLayout Spacing="4" IsVisible="{Binding OpeningTime, Converter={StaticResource IsNotNullConverter}}">
+                                            <Image Source="badge_clock.svg" WidthRequest="14" HeightRequest="14" VerticalOptions="Center" />
+                                            <Label Style="{StaticResource CardMeta}">
+                                                <Label.Text>
+                                                    <MultiBinding StringFormat="{}{0} – {1}">
+                                                        <Binding Path="OpeningTime" />
+                                                        <Binding Path="ClosingTime" />
+                                                    </MultiBinding>
+                                                </Label.Text>
+                                            </Label>
+                                        </HorizontalStackLayout>
                                         <Label Text="{Binding DistanceKm, Converter={StaticResource DistanceKmToTextConverter}}"
                                                IsVisible="{Binding DistanceKm, Converter={StaticResource IsNotNullConverter}}"
                                                Style="{StaticResource CardMeta}" />
                                     </HorizontalStackLayout>
                                 </VerticalStackLayout>
-                            </Border>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
+                            </VerticalStackLayout>
+                        </Border>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
 
-            </VerticalStackLayout>
-        </ScrollView>
-    </Grid>
+        </VerticalStackLayout>
+    </ScrollView>
 </ContentPage>

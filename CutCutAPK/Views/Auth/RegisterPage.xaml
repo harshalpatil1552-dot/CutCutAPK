@@ -7,110 +7,167 @@
              x:Class="CutCutAPK.Views.Auth.RegisterPage"
              x:DataType="viewModels:RegisterViewModel"
              Shell.NavBarIsVisible="False"
-             BackgroundColor="{StaticResource BrandBackground}">
+             BackgroundColor="{StaticResource BrandSurface}">
 
     <ContentPage.Resources>
         <converters:StringNullOrEmptyToBoolConverter x:Key="HasTextConverter" />
         <converters:InverseBoolConverter x:Key="InverseBoolConverter" />
         <converters:BusyToCreateAccountTextConverter x:Key="BusyToCreateAccountTextConverter" />
+        <converters:RoleCardColorConverter x:Key="RoleCardColorConverter" />
     </ContentPage.Resources>
 
     <ScrollView>
-        <Grid Padding="24" MinimumHeightRequest="640">
-            <!-- auth-card -->
-            <Border Style="{StaticResource AuthCardBorder}"
-                    MaximumWidthRequest="420"
-                    HorizontalOptions="Center"
-                    VerticalOptions="Center">
-                <VerticalStackLayout>
+        <VerticalStackLayout Spacing="0">
 
-                    <!-- auth-brand -->
-                    <HorizontalStackLayout Spacing="10" Margin="0,0,0,28">
-                        <Border Style="{StaticResource AuthBrandMark}">
-                            <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
-                        </Border>
-                        <Label Text="CutCut" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
-                    </HorizontalStackLayout>
+            <!-- Hero — the mobile stack of the reference's left marketing panel (full desktop
+                 layout puts this beside the form; there's no room for that side-by-side on a
+                 phone, so it goes on top instead). -->
+            <Border Style="{StaticResource AuthHeroContainer}">
+                <Grid>
+                    <Ellipse Style="{StaticResource AuthHeroShapeRing}"
+                             WidthRequest="150" HeightRequest="190"
+                             HorizontalOptions="End" VerticalOptions="Start"
+                             Margin="0,-50,-50,0" />
+                    <Ellipse Style="{StaticResource AuthHeroShapeRing}"
+                             WidthRequest="90" HeightRequest="90"
+                             HorizontalOptions="Start" VerticalOptions="End"
+                             Margin="-30,0,0,-20" />
 
-                    <Label Text="Create your account" Style="{StaticResource AuthTitle}" Margin="0,0,0,6" />
-                    <Label Text="Book haircuts, or set up your salon on CutCut."
-                           Style="{StaticResource AuthSubtitle}"
-                           Margin="0,0,0,28" />
+                    <VerticalStackLayout Spacing="4">
+                        <Label Text="CUT &amp; CUT" Style="{StaticResource AuthHeroWordmark}" Margin="0,0,0,10" />
+                        <Label Text="Create your" Style="{StaticResource AuthMarketingTitleDark}" />
+                        <Label Text="account" Style="{StaticResource AuthMarketingTitleGold}" />
+                        <Label Text="Book haircuts, or set up your salon on Cut &amp; Cut."
+                               Style="{StaticResource AuthHeroSubtitle}"
+                               Margin="0,8,0,0" />
+                        <BoxView Style="{StaticResource AuthHeroUnderline}" Margin="0,10,0,20" HorizontalOptions="Start" />
 
-                    <!-- alert-error -->
-                    <Border Style="{StaticResource AlertErrorBorder}"
-                            Margin="0,0,0,18"
-                            IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
-                        <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
-                    </Border>
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" RowDefinitions="Auto" Margin="0,0,0,14">
+                            <Border Grid.Column="0" Style="{StaticResource FeatureBadgeBorder}">
+                                <Image Source="icon_check_circle.svg" Style="{StaticResource FeatureIconImage}" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                                <Label Text="Easy Booking" Style="{StaticResource FeatureTitle}" />
+                                <Label Text="Book appointments in just a few clicks" Style="{StaticResource FeatureDescription}" />
+                            </VerticalStackLayout>
+                        </Grid>
 
-                    <!-- Full name -->
-                    <VerticalStackLayout Spacing="6" Margin="0,0,0,18">
-                        <Label Text="Full name" Style="{StaticResource FieldLabel}" />
-                        <Border Style="{StaticResource FieldEntryBorder}">
-                            <Border.Triggers>
-                                <DataTrigger TargetType="Border"
-                                             Binding="{Binding FullNameError, Converter={StaticResource HasTextConverter}}"
-                                             Value="True">
-                                    <Setter Property="Stroke" Value="{StaticResource BrandDanger}" />
-                                </DataTrigger>
-                            </Border.Triggers>
-                            <Entry Text="{Binding FullName}"
-                                   Placeholder="Priya Sharma"
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12" Margin="0,0,0,14">
+                            <Border Grid.Column="0" Style="{StaticResource FeatureBadgeBorder}">
+                                <Image Source="icon_grid.svg" Style="{StaticResource FeatureIconImage}" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                                <Label Text="Manage Salon" Style="{StaticResource FeatureTitle}" />
+                                <Label Text="Manage your salon, staff &amp; services effortlessly" Style="{StaticResource FeatureDescription}" />
+                            </VerticalStackLayout>
+                        </Grid>
+
+                        <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                            <Border Grid.Column="0" Style="{StaticResource FeatureBadgeBorder}">
+                                <Image Source="icon_bell.svg" Style="{StaticResource FeatureIconImage}" />
+                            </Border>
+                            <VerticalStackLayout Grid.Column="1" VerticalOptions="Center" Spacing="1">
+                                <Label Text="Stay Updated" Style="{StaticResource FeatureTitle}" />
+                                <Label Text="Get real-time updates &amp; reminders" Style="{StaticResource FeatureDescription}" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Grid>
+            </Border>
+
+            <!-- Form -->
+            <VerticalStackLayout Padding="24,28,24,28">
+
+            <Label Text="Create your account" Style="{StaticResource AuthHeroTitle}" />
+            <Label Text="Book haircuts, or set up your salon on Cut &amp; Cut."
+                   Style="{StaticResource AuthHeroSubtitle}"
+                   Margin="0,4,0,0" />
+            <BoxView Style="{StaticResource AuthHeroUnderline}" Margin="0,10,0,24" HorizontalOptions="Start" />
+
+            <Border Style="{StaticResource AlertErrorBorder}"
+                        Margin="0,0,0,18"
+                        IsVisible="{Binding ErrorMessage, Converter={StaticResource HasTextConverter}}">
+                    <Label Text="{Binding ErrorMessage}" Style="{StaticResource AlertErrorText}" />
+                </Border>
+
+                <!-- Full name -->
+                <VerticalStackLayout Spacing="6" Margin="0,0,0,18">
+                    <Label Text="Full name" Style="{StaticResource FieldLabel}" />
+                    <Border Style="{StaticResource FieldEntryBorder}">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding FullNameError, Converter={StaticResource HasTextConverter}}"
+                                         Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource BrandDanger}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Image Grid.Column="0" Source="icon_user.svg" Style="{StaticResource AuthFieldIconImage}" />
+                            <Entry Grid.Column="1"
+                                   Text="{Binding FullName}"
+                                   Placeholder="Enter your full name"
                                    ReturnType="Next"
                                    Style="{StaticResource FieldEntry}"
                                    Unfocused="OnFullNameUnfocused"
                                    Completed="OnFullNameCompleted" />
-                        </Border>
-                        <Label Text="{Binding FullNameError}"
-                               Style="{StaticResource FieldErrorLabel}"
-                               IsVisible="{Binding FullNameError, Converter={StaticResource HasTextConverter}}" />
-                    </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                    <Label Text="{Binding FullNameError}"
+                           Style="{StaticResource FieldErrorLabel}"
+                           IsVisible="{Binding FullNameError, Converter={StaticResource HasTextConverter}}" />
+                </VerticalStackLayout>
 
-                    <!-- Phone -->
-                    <VerticalStackLayout Spacing="6" Margin="0,0,0,18">
-                        <Label Text="Phone number" Style="{StaticResource FieldLabel}" />
-                        <Border Style="{StaticResource FieldEntryBorder}">
-                            <Border.Triggers>
-                                <DataTrigger TargetType="Border"
-                                             Binding="{Binding PhoneError, Converter={StaticResource HasTextConverter}}"
-                                             Value="True">
-                                    <Setter Property="Stroke" Value="{StaticResource BrandDanger}" />
-                                </DataTrigger>
-                            </Border.Triggers>
-                            <Entry x:Name="PhoneEntry"
+                <!-- Phone -->
+                <VerticalStackLayout Spacing="6" Margin="0,0,0,18">
+                    <Label Text="Phone number" Style="{StaticResource FieldLabel}" />
+                    <Border Style="{StaticResource FieldEntryBorder}">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding PhoneError, Converter={StaticResource HasTextConverter}}"
+                                         Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource BrandDanger}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Image Grid.Column="0" Source="icon_phone.svg" Style="{StaticResource AuthFieldIconImage}" />
+                            <Entry Grid.Column="1"
+                                   x:Name="PhoneEntry"
                                    Text="{Binding Phone}"
-                                   Placeholder="9876543210"
+                                   Placeholder="Enter your phone number"
                                    Keyboard="Telephone"
                                    ReturnType="Next"
                                    Style="{StaticResource FieldEntry}"
                                    Unfocused="OnPhoneUnfocused"
                                    Completed="OnPhoneCompleted" />
-                        </Border>
-                        <Label Text="{Binding PhoneError}"
-                               Style="{StaticResource FieldErrorLabel}"
-                               IsVisible="{Binding PhoneError, Converter={StaticResource HasTextConverter}}" />
-                    </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                    <Label Text="{Binding PhoneError}"
+                           Style="{StaticResource FieldErrorLabel}"
+                           IsVisible="{Binding PhoneError, Converter={StaticResource HasTextConverter}}" />
+                </VerticalStackLayout>
 
-                    <!-- Email (optional) -->
-                    <VerticalStackLayout Spacing="6" Margin="0,0,0,18">
-                        <Label Style="{StaticResource FieldLabel}">
-                            <Label.FormattedText>
-                                <FormattedString>
-                                    <Span Text="Email " />
-                                    <Span Text="(optional)" Style="{StaticResource FieldHintInline}" />
-                                </FormattedString>
-                            </Label.FormattedText>
-                        </Label>
-                        <Border Style="{StaticResource FieldEntryBorder}">
-                            <Border.Triggers>
-                                <DataTrigger TargetType="Border"
-                                             Binding="{Binding EmailError, Converter={StaticResource HasTextConverter}}"
-                                             Value="True">
-                                    <Setter Property="Stroke" Value="{StaticResource BrandDanger}" />
-                                </DataTrigger>
-                            </Border.Triggers>
-                            <Entry x:Name="EmailEntry"
+                <!-- Email (optional) -->
+                <VerticalStackLayout Spacing="6" Margin="0,0,0,18">
+                    <Label Style="{StaticResource FieldLabel}">
+                        <Label.FormattedText>
+                            <FormattedString>
+                                <Span Text="Email " />
+                                <Span Text="(optional)" Style="{StaticResource FieldHintInline}" />
+                            </FormattedString>
+                        </Label.FormattedText>
+                    </Label>
+                    <Border Style="{StaticResource FieldEntryBorder}">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding EmailError, Converter={StaticResource HasTextConverter}}"
+                                         Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource BrandDanger}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Grid ColumnDefinitions="Auto,*">
+                            <Image Grid.Column="0" Source="icon_mail.svg" Style="{StaticResource AuthFieldIconImage}" />
+                            <Entry Grid.Column="1"
+                                   x:Name="EmailEntry"
                                    Text="{Binding Email}"
                                    Placeholder="you@example.com"
                                    Keyboard="Email"
@@ -118,99 +175,149 @@
                                    Style="{StaticResource FieldEntry}"
                                    Unfocused="OnEmailUnfocused"
                                    Completed="OnEmailCompleted" />
-                        </Border>
-                        <Label Text="{Binding EmailError}"
-                               Style="{StaticResource FieldErrorLabel}"
-                               IsVisible="{Binding EmailError, Converter={StaticResource HasTextConverter}}" />
-                    </VerticalStackLayout>
+                        </Grid>
+                    </Border>
+                    <Label Text="{Binding EmailError}"
+                           Style="{StaticResource FieldErrorLabel}"
+                           IsVisible="{Binding EmailError, Converter={StaticResource HasTextConverter}}" />
+                </VerticalStackLayout>
 
-                    <!-- Role -->
-                    <VerticalStackLayout Spacing="8" Margin="0,0,0,18">
-                        <Label Text="I am a" Style="{StaticResource FieldLabel}" />
-                        <VerticalStackLayout Spacing="8"
-                                             RadioButtonGroup.GroupName="RegisterRole"
-                                             RadioButtonGroup.SelectedValue="{Binding SelectedRoleId}"
-                                             BindableLayout.ItemsSource="{Binding RoleOptions}">
-                            <BindableLayout.ItemTemplate>
-                                <DataTemplate x:DataType="models:RoleOption">
-                                    <Border Style="{StaticResource RoleOptionBorder}">
-                                        <RadioButton Content="{Binding Label}"
+                <!-- Role (card picker) -->
+                <VerticalStackLayout Spacing="8" Margin="0,0,0,18">
+                    <Label Text="I am a" Style="{StaticResource FieldLabel}" />
+                    <VerticalStackLayout Spacing="10"
+                                         RadioButtonGroup.GroupName="RegisterRole"
+                                         RadioButtonGroup.SelectedValue="{Binding SelectedRoleId}"
+                                         BindableLayout.ItemsSource="{Binding RoleOptions}">
+                        <BindableLayout.ItemTemplate>
+                            <DataTemplate x:DataType="models:RoleOption">
+                                <Border Stroke="{Binding Source={x:Reference RoleRadio}, Path=IsChecked, Converter={StaticResource RoleCardColorConverter}, ConverterParameter=Stroke}"
+                                        BackgroundColor="{Binding Source={x:Reference RoleRadio}, Path=IsChecked, Converter={StaticResource RoleCardColorConverter}, ConverterParameter=Fill}"
+                                        StrokeThickness="1"
+                                        StrokeShape="RoundRectangle 12"
+                                        Padding="14,12">
+                                    <Grid ColumnDefinitions="Auto,*" ColumnSpacing="12">
+                                        <RadioButton x:Name="RoleRadio"
+                                                     Grid.Column="0"
                                                      Value="{Binding Id}"
-                                                     Style="{StaticResource RoleOptionRadio}" />
-                                    </Border>
-                                </DataTemplate>
-                            </BindableLayout.ItemTemplate>
-                        </VerticalStackLayout>
+                                                     Style="{StaticResource RoleOptionRadio}"
+                                                     VerticalOptions="Center" />
+                                        <Label Grid.Column="1" VerticalOptions="Center">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Title}"
+                                                          FontAttributes="Bold"
+                                                          TextColor="{StaticResource BrandTextPrimary}" />
+                                                    <Span Text=" — " TextColor="{StaticResource BrandTextMuted}" />
+                                                    <Span Text="{Binding Description}"
+                                                          TextColor="{StaticResource BrandTextMuted}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </BindableLayout.ItemTemplate>
                     </VerticalStackLayout>
+                </VerticalStackLayout>
 
-                    <!-- Password -->
-                    <VerticalStackLayout Spacing="6" Margin="0,0,0,18">
-                        <Label Text="Password" Style="{StaticResource FieldLabel}" />
-                        <Border Style="{StaticResource FieldEntryBorder}">
-                            <Border.Triggers>
-                                <DataTrigger TargetType="Border"
-                                             Binding="{Binding PasswordError, Converter={StaticResource HasTextConverter}}"
-                                             Value="True">
-                                    <Setter Property="Stroke" Value="{StaticResource BrandDanger}" />
-                                </DataTrigger>
-                            </Border.Triggers>
-                            <Entry x:Name="PasswordEntry"
+                <!-- Password -->
+                <VerticalStackLayout Spacing="6" Margin="0,0,0,18">
+                    <Label Text="Password" Style="{StaticResource FieldLabel}" />
+                    <Border Style="{StaticResource FieldEntryBorder}">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding PasswordError, Converter={StaticResource HasTextConverter}}"
+                                         Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource BrandDanger}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <Image Grid.Column="0" Source="icon_lock.svg" Style="{StaticResource AuthFieldIconImage}" />
+                            <Entry Grid.Column="1"
+                                   x:Name="PasswordEntry"
                                    Text="{Binding Password}"
                                    Placeholder="At least 8 characters"
-                                   IsPassword="True"
+                                   IsPassword="{Binding IsPasswordVisible, Converter={StaticResource InverseBoolConverter}}"
                                    ReturnType="Next"
                                    Style="{StaticResource FieldEntry}"
                                    Unfocused="OnPasswordUnfocused"
                                    Completed="OnPasswordCompleted" />
-                        </Border>
-                        <Label Text="{Binding PasswordError}"
-                               Style="{StaticResource FieldErrorLabel}"
-                               IsVisible="{Binding PasswordError, Converter={StaticResource HasTextConverter}}" />
-                    </VerticalStackLayout>
+                            <Image Grid.Column="2" Source="icon_eye.svg" Style="{StaticResource AuthFieldToggleImage}"
+                                   IsVisible="{Binding IsPasswordVisible, Converter={StaticResource InverseBoolConverter}}">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ToggleShowPasswordCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Image Grid.Column="2" Source="icon_eye_off.svg" Style="{StaticResource AuthFieldToggleImage}"
+                                   IsVisible="{Binding IsPasswordVisible}">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ToggleShowPasswordCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                        </Grid>
+                    </Border>
+                    <Label Text="{Binding PasswordError}"
+                           Style="{StaticResource FieldErrorLabel}"
+                           IsVisible="{Binding PasswordError, Converter={StaticResource HasTextConverter}}" />
+                </VerticalStackLayout>
 
-                    <!-- Confirm password -->
-                    <VerticalStackLayout Spacing="6" Margin="0,0,0,24">
-                        <Label Text="Confirm password" Style="{StaticResource FieldLabel}" />
-                        <Border Style="{StaticResource FieldEntryBorder}">
-                            <Border.Triggers>
-                                <DataTrigger TargetType="Border"
-                                             Binding="{Binding ConfirmPasswordError, Converter={StaticResource HasTextConverter}}"
-                                             Value="True">
-                                    <Setter Property="Stroke" Value="{StaticResource BrandDanger}" />
-                                </DataTrigger>
-                            </Border.Triggers>
-                            <Entry x:Name="ConfirmPasswordEntry"
+                <!-- Confirm password -->
+                <VerticalStackLayout Spacing="6" Margin="0,0,0,24">
+                    <Label Text="Confirm password" Style="{StaticResource FieldLabel}" />
+                    <Border Style="{StaticResource FieldEntryBorder}">
+                        <Border.Triggers>
+                            <DataTrigger TargetType="Border"
+                                         Binding="{Binding ConfirmPasswordError, Converter={StaticResource HasTextConverter}}"
+                                         Value="True">
+                                <Setter Property="Stroke" Value="{StaticResource BrandDanger}" />
+                            </DataTrigger>
+                        </Border.Triggers>
+                        <Grid ColumnDefinitions="Auto,*,Auto">
+                            <Image Grid.Column="0" Source="icon_lock.svg" Style="{StaticResource AuthFieldIconImage}" />
+                            <Entry Grid.Column="1"
+                                   x:Name="ConfirmPasswordEntry"
                                    Text="{Binding ConfirmPassword}"
                                    Placeholder="Re-enter your password"
-                                   IsPassword="True"
+                                   IsPassword="{Binding IsConfirmPasswordVisible, Converter={StaticResource InverseBoolConverter}}"
                                    ReturnType="Done"
                                    Style="{StaticResource FieldEntry}"
                                    Unfocused="OnConfirmPasswordUnfocused"
                                    Completed="OnConfirmPasswordCompleted" />
-                        </Border>
-                        <Label Text="{Binding ConfirmPasswordError}"
-                               Style="{StaticResource FieldErrorLabel}"
-                               IsVisible="{Binding ConfirmPasswordError, Converter={StaticResource HasTextConverter}}" />
-                    </VerticalStackLayout>
-
-                    <!-- btn-primary -->
-                    <Button Text="{Binding IsBusy, Converter={StaticResource BusyToCreateAccountTextConverter}}"
-                            Command="{Binding SubmitCommand}"
-                            IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
-                            Style="{StaticResource PrimaryButton}" />
-
-                    <!-- auth-footer -->
-                    <HorizontalStackLayout HorizontalOptions="Center" Margin="0,24,0,0" Spacing="4">
-                        <Label Text="Already have an account?" Style="{StaticResource AuthFooterText}" />
-                        <Label Text="Sign in" Style="{StaticResource AuthFooterLink}">
-                            <Label.GestureRecognizers>
-                                <TapGestureRecognizer Command="{Binding GoToLoginCommand}" />
-                            </Label.GestureRecognizers>
-                        </Label>
-                    </HorizontalStackLayout>
-
+                            <Image Grid.Column="2" Source="icon_eye.svg" Style="{StaticResource AuthFieldToggleImage}"
+                                   IsVisible="{Binding IsConfirmPasswordVisible, Converter={StaticResource InverseBoolConverter}}">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ToggleShowConfirmPasswordCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                            <Image Grid.Column="2" Source="icon_eye_off.svg" Style="{StaticResource AuthFieldToggleImage}"
+                                   IsVisible="{Binding IsConfirmPasswordVisible}">
+                                <Image.GestureRecognizers>
+                                    <TapGestureRecognizer Command="{Binding ToggleShowConfirmPasswordCommand}" />
+                                </Image.GestureRecognizers>
+                            </Image>
+                        </Grid>
+                    </Border>
+                    <Label Text="{Binding ConfirmPasswordError}"
+                           Style="{StaticResource FieldErrorLabel}"
+                           IsVisible="{Binding ConfirmPasswordError, Converter={StaticResource HasTextConverter}}" />
                 </VerticalStackLayout>
-            </Border>
-        </Grid>
+
+                <Button Text="{Binding IsBusy, Converter={StaticResource BusyToCreateAccountTextConverter}}"
+                        Command="{Binding SubmitCommand}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"
+                        Style="{StaticResource AuthGoldButton}" />
+
+                <HorizontalStackLayout HorizontalOptions="Center" Margin="0,24,0,0" Spacing="4">
+                    <Label Text="Already have an account?" Style="{StaticResource AuthFooterText}" />
+                    <Label Text="Sign in" Style="{StaticResource AuthFooterLink}">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding GoToLoginCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </HorizontalStackLayout>
+
+            </VerticalStackLayout>
+        </VerticalStackLayout>
     </ScrollView>
 </ContentPage>

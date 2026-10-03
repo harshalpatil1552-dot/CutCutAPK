@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <ResourceDictionary
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml">
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:converters="clr-namespace:CutCutAPK.Common.Converters">
+
+    <converters:RoleDotColorConverter x:Key="RoleDotColorConverter" />
 
     <!-- ============================================================================
          Styles for the auth screens (Login/Register) and the signed-in placeholder
@@ -112,18 +115,8 @@
         <Setter Property="FontAttributes" Value="None" />
     </Style>
 
-    <!-- role-option: one row per selectable role on Register. -->
-    <Style x:Key="RoleOptionBorder" TargetType="Border">
-        <Setter Property="Stroke" Value="{StaticResource BrandBorder}" />
-        <Setter Property="StrokeThickness" Value="1" />
-        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
-        <Setter Property="Padding" Value="12,10" />
-    </Style>
-
-    <Style x:Key="RoleOptionRadio" TargetType="RadioButton">
-        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
-        <Setter Property="FontSize" Value="14" />
-    </Style>
+    <!-- role-option: see RoleOptionRadio below — the "Cut & Cut" role card replaces the plain
+         RadioButton row, and its own ControlTemplate now supplies the bordered card look. -->
 
     <!-- == Buttons (btn-primary) == -->
 
@@ -163,6 +156,371 @@
     <Style x:Key="AlertErrorText" TargetType="Label">
         <Setter Property="TextColor" Value="{StaticResource BrandDanger}" />
         <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <!-- ============================================================================
+         "Cut & Cut" auth redesign — Login/Register only. Everything above this line
+         is untouched and still used by every other signed-in placeholder screen.
+         ============================================================================ -->
+
+    <!-- == Hero banner == -->
+
+    <Style x:Key="AuthHeroContainer" TargetType="Border">
+        <Setter Property="Background" Value="{StaticResource AuthHeroBrush}" />
+        <Setter Property="Stroke" Value="Transparent" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 0,0,28,28" />
+        <Setter Property="Padding" Value="24,56,24,32" />
+    </Style>
+
+    <!-- One faint ring in the hero background — two of these, sized/positioned differently. -->
+    <Style x:Key="AuthHeroShapeRing" TargetType="Ellipse">
+        <Setter Property="Fill" Value="Transparent" />
+        <Setter Property="Stroke" Value="{StaticResource AuthHeroShape}" />
+        <Setter Property="StrokeThickness" Value="2" />
+    </Style>
+
+    <Style x:Key="AuthHeroWordmark" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource AuthNavy}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="CharacterSpacing" Value="2" />
+    </Style>
+
+    <Style x:Key="AuthHeroTitle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource AuthNavy}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="28" />
+    </Style>
+
+    <Style x:Key="AuthHeroSubtitle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource AuthNavyMuted}" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style x:Key="AuthHeroUnderline" TargetType="BoxView">
+        <Setter Property="Color" Value="{StaticResource AuthGold}" />
+        <Setter Property="WidthRequest" Value="40" />
+        <Setter Property="HeightRequest" Value="3" />
+        <Setter Property="CornerRadius" Value="2" />
+    </Style>
+
+    <!-- Big two-line marketing headline in the hero ("Create your" / "account") — two styles,
+         one per line/color, unlike AuthHeroTitle which is the plain heading repeated at the top
+         of the form below the hero. -->
+    <Style x:Key="AuthMarketingTitleDark" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource AuthNavy}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="30" />
+        <Setter Property="LineHeight" Value="1.05" />
+    </Style>
+
+    <Style x:Key="AuthMarketingTitleGold" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource AuthGold}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="30" />
+        <Setter Property="LineHeight" Value="1.05" />
+    </Style>
+
+    <!-- == Feature bullets (hero's 3-row "why us" list) == -->
+
+    <Style x:Key="FeatureBadgeBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="White" />
+        <Setter Property="Stroke" Value="{StaticResource AuthHeroShape}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+        <Setter Property="WidthRequest" Value="36" />
+        <Setter Property="HeightRequest" Value="36" />
+        <Setter Property="Padding" Value="8" />
+    </Style>
+
+    <Style x:Key="FeatureIconImage" TargetType="Image">
+        <Setter Property="WidthRequest" Value="18" />
+        <Setter Property="HeightRequest" Value="18" />
+    </Style>
+
+    <Style x:Key="FeatureTitle" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource AuthNavy}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style x:Key="FeatureDescription" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource AuthNavyMuted}" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <!-- == Icon fields (icon sits at the start of the same pill as the Entry) ==
+         Both reference line-art SVGs (Resources/Images/icon_*.svg) recolored to AuthNavyMuted,
+         not emoji or platform glyphs, so they render the same thin outline on every platform. -->
+
+    <Style x:Key="AuthFieldIconImage" TargetType="Image">
+        <Setter Property="WidthRequest" Value="18" />
+        <Setter Property="HeightRequest" Value="18" />
+        <Setter Property="VerticalOptions" Value="Center" />
+        <Setter Property="Margin" Value="0,0,10,0" />
+    </Style>
+
+    <!-- Small tap target for the show/hide-password icon at the end of a password field. -->
+    <Style x:Key="AuthFieldToggleImage" TargetType="Image">
+        <Setter Property="WidthRequest" Value="18" />
+        <Setter Property="HeightRequest" Value="18" />
+        <Setter Property="VerticalOptions" Value="Center" />
+        <Setter Property="Margin" Value="10,0,0,0" />
+    </Style>
+
+    <Style x:Key="AuthInlineLink" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource AuthGold}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <!-- == Gold button (replaces PrimaryButton on the auth screens only) == -->
+
+    <Style x:Key="AuthGoldButton" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource AuthGoldButtonBrush}" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="CornerRadius" Value="12" />
+        <Setter Property="HeightRequest" Value="50" />
+        <Setter Property="BorderWidth" Value="0" />
+        <Setter Property="HorizontalOptions" Value="Fill" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.6" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <!-- == Cream field + small gold button — reused on Today's Appointments / Services, sitting
+         alongside (not replacing) the blue-branded FieldEntryBorder/SmallButtonPrimary in
+         AppStyles.xaml, which Staff/Settings and the customer screens still use unchanged. == -->
+
+    <Style x:Key="CreamFieldEntryBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource AuthCreamTop}" />
+        <Setter Property="Stroke" Value="{StaticResource AuthCreamFieldBorder}" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="Padding" Value="13,0" />
+        <Setter Property="HeightRequest" Value="46" />
+    </Style>
+
+    <Style x:Key="CreamFieldEntry" TargetType="Entry">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="PlaceholderColor" Value="{StaticResource AuthNavyMuted}" />
+        <Setter Property="BackgroundColor" Value="Transparent" />
+        <Setter Property="FontSize" Value="15" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <Style x:Key="SmallGoldButton" TargetType="Button">
+        <Setter Property="Background" Value="{StaticResource AuthGoldButtonBrush}" />
+        <Setter Property="TextColor" Value="White" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="CornerRadius" Value="8" />
+        <Setter Property="Padding" Value="16,8" />
+        <Setter Property="BorderWidth" Value="0" />
+        <Setter Property="MinimumHeightRequest" Value="36" />
+        <Setter Property="VisualStateManager.VisualStateGroups">
+            <VisualStateGroupList>
+                <VisualStateGroup x:Name="CommonStates">
+                    <VisualState x:Name="Normal" />
+                    <VisualState x:Name="Disabled">
+                        <VisualState.Setters>
+                            <Setter Property="Opacity" Value="0.55" />
+                        </VisualState.Setters>
+                    </VisualState>
+                </VisualStateGroup>
+            </VisualStateGroupList>
+        </Setter>
+    </Style>
+
+    <!-- Small cream square holding a gold icon at the start of a card row (Book: Service / Date /
+         Time cards). -->
+    <Style x:Key="CardIconBadge" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource AuthCreamTop}" />
+        <Setter Property="Stroke" Value="Transparent" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+        <Setter Property="WidthRequest" Value="40" />
+        <Setter Property="HeightRequest" Value="40" />
+        <Setter Property="Padding" Value="10" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <!-- In-page section heading ("Services", "Reviews" on salon detail). -->
+    <Style x:Key="SectionHeading" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource AuthNavy}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="18" />
+    </Style>
+
+    <!-- "← Back" link on pushed pages, which hide the Shell nav bar and its back arrow. -->
+    <Style x:Key="BackLink" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource AuthNavyMuted}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="14" />
+    </Style>
+
+    <Style x:Key="CreamEmptyStateBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource AuthCreamTop}" />
+        <Setter Property="Stroke" Value="Transparent" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 16" />
+        <Setter Property="Padding" Value="24" />
+    </Style>
+
+    <!-- == Booking date strip — selected day is gold, matching the web app's date picker. == -->
+
+    <Style x:Key="DatePillBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandSurface}" />
+        <Setter Property="Stroke" Value="{StaticResource BrandBorder}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+        <Setter Property="Padding" Value="14,8" />
+        <Setter Property="WidthRequest" Value="56" />
+        <Border.Triggers>
+            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                <Setter Property="BackgroundColor" Value="{StaticResource AuthGold}" />
+                <Setter Property="Stroke" Value="{StaticResource AuthGold}" />
+            </DataTrigger>
+        </Border.Triggers>
+    </Style>
+
+    <Style x:Key="DatePillNumber" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextPrimary}" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+        <Label.Triggers>
+            <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                <Setter Property="TextColor" Value="White" />
+            </DataTrigger>
+        </Label.Triggers>
+    </Style>
+
+    <Style x:Key="DatePillName" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="FontSize" Value="12" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+        <Label.Triggers>
+            <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                <Setter Property="TextColor" Value="White" />
+            </DataTrigger>
+        </Label.Triggers>
+    </Style>
+
+    <!-- == Booking slot grid — available is green, selected is blue, booked/past is gray and
+         non-interactive, matching the web app's slot legend exactly. == -->
+
+    <Style x:Key="SlotPillBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandSuccessLight}" />
+        <Setter Property="Stroke" Value="{StaticResource BrandSuccess}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 8" />
+        <Setter Property="Padding" Value="10,8" />
+        <Border.Triggers>
+            <DataTrigger TargetType="Border" Binding="{Binding IsSelected}" Value="True">
+                <Setter Property="BackgroundColor" Value="{StaticResource BrandPrimaryLight}" />
+                <Setter Property="Stroke" Value="{StaticResource BrandPrimary}" />
+            </DataTrigger>
+            <DataTrigger TargetType="Border" Binding="{Binding IsAvailable}" Value="False">
+                <Setter Property="BackgroundColor" Value="{StaticResource Gray100}" />
+                <Setter Property="Stroke" Value="{StaticResource Gray200}" />
+            </DataTrigger>
+        </Border.Triggers>
+    </Style>
+
+    <Style x:Key="SlotPillText" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandSuccess}" />
+        <Setter Property="FontSize" Value="13" />
+        <Setter Property="FontAttributes" Value="Bold" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+        <Label.Triggers>
+            <DataTrigger TargetType="Label" Binding="{Binding IsSelected}" Value="True">
+                <Setter Property="TextColor" Value="{StaticResource BrandPrimaryDark}" />
+            </DataTrigger>
+            <DataTrigger TargetType="Label" Binding="{Binding IsAvailable}" Value="False">
+                <Setter Property="TextColor" Value="{StaticResource BrandTextMuted}" />
+                <Setter Property="FontAttributes" Value="None" />
+            </DataTrigger>
+        </Label.Triggers>
+    </Style>
+
+    <Style x:Key="SlotLegendDot" TargetType="Ellipse">
+        <Setter Property="WidthRequest" Value="10" />
+        <Setter Property="HeightRequest" Value="10" />
+    </Style>
+
+    <Style x:Key="SlotLegendText" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="FontSize" Value="12" />
+    </Style>
+
+    <!-- == "or continue with" divider + social buttons (decorative — no sign-in provider is
+         wired up behind these yet) == -->
+
+    <Style x:Key="AuthDividerLine" TargetType="BoxView">
+        <Setter Property="Color" Value="{StaticResource BrandBorder}" />
+        <Setter Property="HeightRequest" Value="1" />
+        <Setter Property="VerticalOptions" Value="Center" />
+    </Style>
+
+    <Style x:Key="AuthDividerText" TargetType="Label">
+        <Setter Property="TextColor" Value="{StaticResource BrandTextMuted}" />
+        <Setter Property="FontSize" Value="13" />
+    </Style>
+
+    <Style x:Key="SocialButtonBorder" TargetType="Border">
+        <Setter Property="BackgroundColor" Value="{StaticResource BrandSurface}" />
+        <Setter Property="Stroke" Value="{StaticResource BrandBorder}" />
+        <Setter Property="StrokeThickness" Value="1" />
+        <Setter Property="StrokeShape" Value="RoundRectangle 10" />
+        <Setter Property="Padding" Value="0,10" />
+        <Setter Property="HorizontalOptions" Value="Fill" />
+    </Style>
+
+    <Style x:Key="SocialButtonIcon" TargetType="Label">
+        <Setter Property="FontSize" Value="16" />
+        <Setter Property="HorizontalTextAlignment" Value="Center" />
+    </Style>
+
+    <!-- == Role card (Register's "I am a" picker) ==
+         The title/description text and the card's own Border live directly in RegisterPage.xaml's
+         DataTemplate, NOT inside a ControlTemplate — a RadioButton's ControlTemplate does not
+         reliably receive the item's data via plain {Binding} (this is what caused the role names
+         to render blank the first time around). The card Border's selected-state colors are read
+         from its RadioButton sibling via an x:Reference binding (RoleCardColorConverter) instead.
+         The dot's own Checked/Unchecked recolor below uses TemplateBinding IsChecked (not data
+         binding), so it's safe to keep in a ControlTemplate. -->
+
+    <Style x:Key="RoleOptionRadio" TargetType="RadioButton">
+        <Setter Property="ControlTemplate">
+            <Setter.Value>
+                <ControlTemplate>
+                    <Grid WidthRequest="20" HeightRequest="20">
+                        <Border StrokeShape="RoundRectangle 10"
+                                StrokeThickness="2"
+                                Stroke="{TemplateBinding IsChecked, Converter={StaticResource RoleDotColorConverter}, ConverterParameter=Stroke}"
+                                BackgroundColor="{TemplateBinding IsChecked, Converter={StaticResource RoleDotColorConverter}, ConverterParameter=Fill}" />
+                        <Label Text="&#10003;"
+                               TextColor="White"
+                               FontSize="12"
+                               FontAttributes="Bold"
+                               HorizontalOptions="Center"
+                               VerticalOptions="Center"
+                               HorizontalTextAlignment="Center"
+                               IsVisible="{TemplateBinding IsChecked}" />
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
     </Style>
 
 </ResourceDictionary>

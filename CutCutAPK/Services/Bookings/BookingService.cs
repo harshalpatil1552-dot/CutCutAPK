@@ -18,6 +18,10 @@ public sealed class BookingService : IBookingService
     public Task<BookingResponseDto> CreateAsync(BookingCreateRequestDto request, CancellationToken cancellationToken = default) =>
         _apiClient.PostAsync<BookingResponseDto>(BaseRoute, request, cancellationToken);
 
+    public Task<List<AvailableSlotDto>> GetAvailableSlotsAsync(int salonId, int serviceId, DateOnly date, CancellationToken cancellationToken = default) =>
+        _apiClient.GetAsync<List<AvailableSlotDto>>(
+            $"{BaseRoute}/slots?salonId={salonId}&serviceId={serviceId}&date={date:yyyy-MM-dd}", cancellationToken);
+
     public Task<List<BookingResponseDto>> GetMineAsync(CancellationToken cancellationToken = default) =>
         _apiClient.GetAsync<List<BookingResponseDto>>($"{BaseRoute}/mine", cancellationToken);
 

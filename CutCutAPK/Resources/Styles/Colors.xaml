@@ -70,4 +70,30 @@
     <SolidColorBrush x:Key="BrandPrimaryBrush" Color="{StaticResource BrandPrimary}"/>
     <SolidColorBrush x:Key="BrandDangerBrush" Color="{StaticResource BrandDanger}"/>
     <SolidColorBrush x:Key="BrandBorderBrush" Color="{StaticResource BrandBorder}"/>
+
+    <!-- ============================================================================
+         "Cut & Cut" auth redesign — Login/Register, plus Today's Appointments and
+         Services (see AuthStyles.xaml). Kept separate from the Brand* tokens above so
+         nothing else in the app (Staff/Settings/Customer screens) is affected.
+         ============================================================================ -->
+    <Color x:Key="AuthCreamTop">#FBEBD2</Color>
+    <Color x:Key="AuthCreamBottom">#EFC888</Color>
+    <Color x:Key="AuthCreamFieldBorder">#E8D5AC</Color>
+    <Color x:Key="AuthGold">#C98A2E</Color>
+    <Color x:Key="AuthGoldDark">#A66A1E</Color>
+    <Color x:Key="AuthGoldLight">#FBF0DC</Color>
+    <Color x:Key="AuthNavy">#20293A</Color>
+    <Color x:Key="AuthNavyMuted">#5B6472</Color>
+    <!-- Faint outline for the decorative shapes in the hero banner. -->
+    <Color x:Key="AuthHeroShape">#33FFFFFF</Color>
+
+    <LinearGradientBrush x:Key="AuthHeroBrush" StartPoint="0,0" EndPoint="1,1">
+        <GradientStop Color="{StaticResource AuthCreamTop}" Offset="0.0" />
+        <GradientStop Color="{StaticResource AuthCreamBottom}" Offset="1.0" />
+    </LinearGradientBrush>
+
+    <LinearGradientBrush x:Key="AuthGoldButtonBrush" StartPoint="0,0" EndPoint="1,0">
+        <GradientStop Color="{StaticResource AuthGold}" Offset="0.0" />
+        <GradientStop Color="{StaticResource AuthGoldDark}" Offset="1.0" />
+    </LinearGradientBrush>
 </ResourceDictionary>

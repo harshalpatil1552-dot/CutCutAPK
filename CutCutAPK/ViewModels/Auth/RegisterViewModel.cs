@@ -67,6 +67,12 @@ public sealed partial class RegisterViewModel : ViewModelBase
     [ObservableProperty]
     private string? confirmPasswordError;
 
+    [ObservableProperty]
+    private bool isPasswordVisible;
+
+    [ObservableProperty]
+    private bool isConfirmPasswordVisible;
+
     partial void OnFullNameChanged(string value)
     {
         if (_fullNameTouched) RefreshFullNameError();
@@ -119,6 +125,8 @@ public sealed partial class RegisterViewModel : ViewModelBase
         PasswordError = null;
         ConfirmPasswordError = null;
         ErrorMessage = null;
+        IsPasswordVisible = false;
+        IsConfirmPasswordVisible = false;
 
         _fullNameTouched = false;
         _phoneTouched = false;
@@ -177,6 +185,12 @@ public sealed partial class RegisterViewModel : ViewModelBase
 
     [RelayCommand]
     private async Task GoToLoginAsync() => await _navigationService.GoBackAsync();
+
+    [RelayCommand]
+    private void ToggleShowPassword() => IsPasswordVisible = !IsPasswordVisible;
+
+    [RelayCommand]
+    private void ToggleShowConfirmPassword() => IsConfirmPasswordVisible = !IsConfirmPasswordVisible;
 
     private bool CanSubmit() => !IsBusy;
 

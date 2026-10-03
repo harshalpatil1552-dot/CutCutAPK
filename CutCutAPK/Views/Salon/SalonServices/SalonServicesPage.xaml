@@ -17,33 +17,22 @@
         <converters:IsNotBusyIdConverter x:Key="IsNotBusyIdConverter" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="*">
 
-        <!-- app-header -->
-        <Grid Grid.Row="0" RowDefinitions="Auto,1" BackgroundColor="{StaticResource BrandSurface}">
-            <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto" Padding="20,14" ColumnSpacing="12">
-                <HorizontalStackLayout Grid.Column="0" Spacing="10">
-                    <Border Style="{StaticResource AuthBrandMark}">
-                        <Label Text="CC" Style="{StaticResource AuthBrandMarkText}" />
-                    </Border>
-                    <Label Text="CutCut for Salons" Style="{StaticResource AuthBrandName}" VerticalOptions="Center" />
-                </HorizontalStackLayout>
-                <HorizontalStackLayout Grid.Column="1" Spacing="2" HorizontalOptions="Start">
-                    <Button Text="Today" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToTodayCommand}" />
-                    <Button Text="Services" Style="{StaticResource HeaderNavButtonActive}" Command="{Binding GoToServicesCommand}" IsVisible="{Binding IsOwner}" />
-                    <Button Text="Staff" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToStaffCommand}" IsVisible="{Binding IsOwner}" />
-                    <Button Text="Settings" Style="{StaticResource HeaderNavButton}" Command="{Binding GoToSettingsCommand}" IsVisible="{Binding IsOwner}" />
-                </HorizontalStackLayout>
-                <Button Grid.Column="2" Text="Log out" Style="{StaticResource SecondaryButton}" Command="{Binding LogoutCommand}" />
-            </Grid>
-            <BoxView Grid.Row="1" Color="{StaticResource BrandBorder}" HeightRequest="1" />
-        </Grid>
-
-        <ScrollView Grid.Row="1">
+        <ScrollView Grid.Row="0">
             <VerticalStackLayout Padding="24" Spacing="0">
 
-                <Label Text="Services" Style="{StaticResource PageTitle}" Margin="0,0,0,2" />
-                <Label Text="What customers can book at your salon." Style="{StaticResource PageSubtitle}" Margin="0,0,0,18" />
+                <Grid ColumnDefinitions="*,Auto" Margin="0,0,0,18">
+                    <VerticalStackLayout Grid.Column="0" Spacing="2">
+                        <Label Text="Services" Style="{StaticResource AuthHeroTitle}" Margin="0,0,0,2" />
+                        <Label Text="What customers can book at your salon." Style="{StaticResource PageSubtitle}" />
+                    </VerticalStackLayout>
+                    <Label Grid.Column="1" Text="Log out" Style="{StaticResource AuthInlineLink}" VerticalOptions="Start">
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding LogoutCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
+                </Grid>
 
                 <Border Style="{StaticResource AlertErrorBorder}"
                         Margin="0,0,0,16"
@@ -59,29 +48,29 @@
                         <Grid ColumnDefinitions="*,*" ColumnSpacing="14">
                             <VerticalStackLayout Grid.Column="0" Spacing="6">
                                 <Label Text="Name" Style="{StaticResource FieldLabel}" />
-                                <Border Style="{StaticResource FieldEntryBorder}">
-                                    <Entry Text="{Binding NewServiceName}" Placeholder="Haircut" Style="{StaticResource FieldEntry}" />
+                                <Border Style="{StaticResource CreamFieldEntryBorder}">
+                                    <Entry Text="{Binding NewServiceName}" Placeholder="Haircut" Style="{StaticResource CreamFieldEntry}" />
                                 </Border>
                             </VerticalStackLayout>
                             <VerticalStackLayout Grid.Column="1" Spacing="6">
                                 <Label Text="Duration (minutes)" Style="{StaticResource FieldLabel}" />
-                                <Border Style="{StaticResource FieldEntryBorder}">
-                                    <Entry Text="{Binding NewServiceDurationMinutes}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" />
+                                <Border Style="{StaticResource CreamFieldEntryBorder}">
+                                    <Entry Text="{Binding NewServiceDurationMinutes}" Keyboard="Numeric" Style="{StaticResource CreamFieldEntry}" />
                                 </Border>
                             </VerticalStackLayout>
                         </Grid>
 
                         <VerticalStackLayout Spacing="6" MaximumWidthRequest="200" HorizontalOptions="Start">
                             <Label Text="Price (₹)" Style="{StaticResource FieldLabel}" />
-                            <Border Style="{StaticResource FieldEntryBorder}">
-                                <Entry Text="{Binding NewServicePrice}" Keyboard="Numeric" Style="{StaticResource FieldEntry}" />
+                            <Border Style="{StaticResource CreamFieldEntryBorder}">
+                                <Entry Text="{Binding NewServicePrice}" Keyboard="Numeric" Style="{StaticResource CreamFieldEntry}" />
                             </Border>
                         </VerticalStackLayout>
 
                         <Button Text="{Binding IsSubmitting, Converter={StaticResource BoolToTextConverter}, ConverterParameter='Add service|Adding…'}"
                                 Command="{Binding SubmitCommand}"
                                 IsEnabled="{Binding IsSubmitting, Converter={StaticResource InverseBoolConverter}}"
-                                Style="{StaticResource SmallButtonPrimary}"
+                                Style="{StaticResource SmallGoldButton}"
                                 HorizontalOptions="Start" />
                     </VerticalStackLayout>
                 </Border>
@@ -121,7 +110,7 @@
                                             CommandParameter="{Binding .}">
                                         <Button.Triggers>
                                             <DataTrigger TargetType="Button" Binding="{Binding IsActive}" Value="False">
-                                                <Setter Property="BackgroundColor" Value="{StaticResource BrandPrimary}" />
+                                                <Setter Property="BackgroundColor" Value="{StaticResource AuthGold}" />
                                                 <Setter Property="TextColor" Value="White" />
                                                 <Setter Property="BorderWidth" Value="0" />
                                             </DataTrigger>
